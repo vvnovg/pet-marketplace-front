@@ -1,10 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import Home from "@/app/page";
+import { NextIntlClientProvider } from "next-intl";
+import Home from "@/app/[locale]/page";
+import ru from "@/messages/ru.json";
 
 describe("Home", () => {
-  it("renders the brand title", () => {
-    render(<Home />);
-    expect(screen.getByText("PetMarketplace")).toBeInTheDocument();
+  it("renders the localized welcome title", () => {
+    render(
+      <NextIntlClientProvider locale="ru" messages={ru}>
+        <Home />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("Маркетплейс животных")).toBeInTheDocument();
   });
 });
