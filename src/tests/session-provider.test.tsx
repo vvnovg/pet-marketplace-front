@@ -7,7 +7,10 @@ import { SessionProvider, useSession } from "@/components/auth/SessionProvider";
 import { ApiError } from "@/lib/api/errors";
 
 const server = setupServer();
-beforeEach(() => server.listen({ onUnhandledRequest: "bypass" }));
+beforeEach(() => {
+  server.listen({ onUnhandledRequest: "bypass" });
+  replace.mockClear();
+});
 afterEach(() => { server.resetHandlers(); server.close(); });
 
 const replace = vi.fn();

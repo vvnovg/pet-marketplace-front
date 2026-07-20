@@ -2,7 +2,6 @@
 
 import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n";
 import { getCurrentUser } from "@/lib/api/endpoints/users";
 import { ApiError } from "@/lib/api/errors";
