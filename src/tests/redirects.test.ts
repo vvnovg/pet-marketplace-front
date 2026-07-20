@@ -16,6 +16,12 @@ describe("safeCallbackUrl", () => {
   it("rejects external https", () => expect(safeCallbackUrl("https://evil.com", "ru", "BUYER")).toBe("/ru/dashboard"));
   it("rejects empty → role home", () => expect(safeCallbackUrl("", "ru", "ADMIN")).toBe("/ru/admin"));
   it("rejects null → role home", () => expect(safeCallbackUrl(null, "ru", "BUYER")).toBe("/ru/dashboard"));
+  it("rejects backslash protocol-relative /\\evil.com → role home", () =>
+    expect(safeCallbackUrl("/\\evil.com", "ru", "BUYER")).toBe("/ru/dashboard"));
+  it("rejects values with whitespace/control chars → role home", () =>
+    expect(safeCallbackUrl("/ru/dashboard\n", "ru", "BUYER")).toBe("/ru/dashboard"));
+  it("accepts a benign path with a colon in the query string", () =>
+    expect(safeCallbackUrl("/ru/dashboard?next=https://app.com/x", "ru", "BUYER")).toBe("/ru/dashboard?next=https://app.com/x"));
 });
 
 describe("redirectAfterLogin", () => {
