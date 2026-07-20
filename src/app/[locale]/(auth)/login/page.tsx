@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations, useLocale } from "next-intl";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@/i18n";
 import { loginSchema, type LoginInput } from "@/lib/validation/auth-schemas";
 import { loginViaApi } from "@/lib/api/endpoints/auth";
 import { ApiError } from "@/lib/api/errors";
 import { getCurrentUser } from "@/lib/api/endpoints/users";
-import { redirectAfterLogin } from "@/lib/auth/redirects";
+import { redirectAfterLogin, stripLocalePrefix } from "@/lib/auth/redirects";
 import type { UserProfile } from "@/types/api";
 import { AuthCard } from "../auth-card";
 
@@ -38,10 +39,11 @@ function useResolvedProp(searchParams: Promise<SearchParams> | SearchParams): Se
   return params;
 }
 
-export default function LoginPage({ searchParams }: { searchParams: Promise<SearchParams> | SearchParams }) {
+export default function LoginPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const t = useTranslations("Auth.login");
   const locale = useLocale();
   const router = useRouter();
+  const qc = useQueryClient();
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
@@ -57,8 +59,17 @@ export default function LoginPage({ searchParams }: { searchParams: Promise<Sear
     try {
       await loginViaApi(data.email, data.password);
       const me = await getCurrentUser().catch(() => null as UserProfile | null);
+      // Populate the SessionProvider's ["session"] query cache so the dashboard
+      // (and UserMenu) see the user immediately on the soft client-side
+      // navigation. Without this, the cache holds the `null` resolved on the
+      // login page's initial mount and the dashboard renders nothing until a
+      // full page reload. Mirrors the logout flow's qc.removeQueries.
+      if (me) qc.setQueryData(["session"], me);
       const target = redirectAfterLogin(me, callbackUrl, locale);
-      router.replace(target);
+      // stripLocalePrefix: next-intl's useRouter auto-prepends the locale, so
+      // the redirect target (which includes /{locale}) must be stripped first
+      // to avoid a double prefix (/ru/ru/dashboard).
+      router.replace(stripLocalePrefix(target));
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         setError("password", { message: t("invalidCredentials") });

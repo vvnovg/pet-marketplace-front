@@ -54,7 +54,7 @@ describe("ForgotPasswordPage", () => {
 });
 
 describe("ResetPasswordPage", () => {
-  it("resets and redirects to /ru/login?reset=1", async () => {
+  it("resets and redirects to /login?reset=1", async () => {
     const user = userEvent.setup();
     server.use(http.post("/api/auth/reset-password", () => HttpResponse.json({ ok: true })));
     render(intl(<ResetPasswordPage searchParams={Promise.resolve({ token: "tok-1" })} />));
@@ -65,7 +65,7 @@ describe("ResetPasswordPage", () => {
     await user.type(newPwd, "12345678");
     await user.type(confirmPwd, "12345678");
     await user.click(screen.getByRole("button", { name: "Сбросить" }));
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/login?reset=1"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login?reset=1"));
   });
   it("shows mismatch error", async () => {
     const user = userEvent.setup();

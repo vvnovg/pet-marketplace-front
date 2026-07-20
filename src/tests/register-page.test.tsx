@@ -28,14 +28,14 @@ const intl = (kids: React.ReactNode) => (
 );
 
 describe("RegisterPage", () => {
-  it("registers and redirects to /ru/verify-email-info", async () => {
+  it("registers and redirects to /verify-email-info", async () => {
     const user = userEvent.setup();
     server.use(http.post("/api/auth/register", () => new HttpResponse(null, { status: 201 })));
     render(intl(<RegisterPage />));
     await user.type(screen.getByLabelText("Email"), "a@b.co");
     await user.type(screen.getByLabelText("Пароль"), "12345678");
     await user.click(screen.getByRole("button", { name: "Зарегистрироваться" }));
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/verify-email-info"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/verify-email-info"));
   });
 
   it("shows field error on 409 duplicate email", async () => {
@@ -50,13 +50,13 @@ describe("RegisterPage", () => {
 });
 
 describe("VerifyEmailInfoPage", () => {
-  it("dev helper: success redirects to /ru/login?verified=1", async () => {
+  it("dev helper: success redirects to /login?verified=1", async () => {
     const user = userEvent.setup();
     server.use(http.post("/api/auth/verify-email", () => HttpResponse.json({ ok: true })));
     render(intl(<VerifyEmailInfoPage />));
     await user.type(screen.getByLabelText(/Redis/i), "tok-1");
     await user.click(screen.getByRole("button", { name: "Подтвердить" }));
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/login?verified=1"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/login?verified=1"));
   });
 
   it("dev helper: 400 shows inline error", async () => {

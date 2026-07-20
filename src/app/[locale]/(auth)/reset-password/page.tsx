@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n";
 import { resetSchema, type ResetInput } from "@/lib/validation/auth-schemas";
 import { resetPasswordViaApi } from "@/lib/api/endpoints/auth";
@@ -33,7 +33,6 @@ function useResolvedProp(searchParams?: Promise<SearchParams> | SearchParams): S
 
 export default function ResetPasswordPage({ searchParams }: { searchParams?: Promise<SearchParams> }) {
   const t = useTranslations("Auth.resetPassword");
-  const locale = useLocale();
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -52,7 +51,7 @@ export default function ResetPasswordPage({ searchParams }: { searchParams?: Pro
     setServerError(null);
     try {
       await resetPasswordViaApi(token ?? "", data.newPassword);
-      router.replace(`/${locale}/login?reset=1`);
+      router.replace("/login?reset=1");
     } catch {
       setServerError(t("error"));
     }

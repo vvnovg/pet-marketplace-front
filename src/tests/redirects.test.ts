@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { roleBasedHome, safeCallbackUrl, redirectAfterLogin } from "@/lib/auth/redirects";
+import { roleBasedHome, safeCallbackUrl, redirectAfterLogin, stripLocalePrefix } from "@/lib/auth/redirects";
 
 describe("roleBasedHome", () => {
   it("admin → /{locale}/admin", () => expect(roleBasedHome("ru", "ADMIN")).toBe("/ru/admin"));
@@ -31,4 +31,13 @@ describe("redirectAfterLogin", () => {
   it("buyer without callback → /dashboard", () => expect(redirectAfterLogin({ role: "BUYER" }, null, "ru")).toBe("/ru/dashboard"));
   it("unsafe callback → role home", () =>
     expect(redirectAfterLogin({ role: "BUYER" }, "//evil.com", "ru")).toBe("/ru/dashboard"));
+});
+
+describe("stripLocalePrefix", () => {
+  it("strips /ru prefix from /ru/dashboard", () => expect(stripLocalePrefix("/ru/dashboard")).toBe("/dashboard"));
+  it("strips /en prefix from /en/admin", () => expect(stripLocalePrefix("/en/admin")).toBe("/admin"));
+  it("preserves query string after /ru", () => expect(stripLocalePrefix("/ru/login?verified=1")).toBe("/login?verified=1"));
+  it("strips /ru when it is the whole path", () => expect(stripLocalePrefix("/ru")).toBe(""));
+  it("does not strip /rust (locale is a full segment)", () => expect(stripLocalePrefix("/rust/dashboard")).toBe("/rust/dashboard"));
+  it("leaves a non-locale path untouched", () => expect(stripLocalePrefix("/dashboard")).toBe("/dashboard"));
 });

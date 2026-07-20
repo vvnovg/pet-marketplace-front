@@ -65,7 +65,7 @@ describe("LoginPage", () => {
     expect(screen.queryByText(ru.Auth.login.resetBanner)).not.toBeInTheDocument();
   });
 
-  it("logs in a BUYER and redirects to /ru/dashboard", async () => {
+  it("logs in a BUYER and redirects to /dashboard", async () => {
     const user = userEvent.setup();
     server.use(
       http.post("/api/auth/login", () => HttpResponse.json({ ok: true })),
@@ -73,10 +73,10 @@ describe("LoginPage", () => {
     );
     renderPage();
     await fillAndSubmit(user);
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/dashboard"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/dashboard"));
   });
 
-  it("logs in an ADMIN and redirects to /ru/admin", async () => {
+  it("logs in an ADMIN and redirects to /admin", async () => {
     const user = userEvent.setup();
     server.use(
       http.post("/api/auth/login", () => HttpResponse.json({ ok: true })),
@@ -84,7 +84,7 @@ describe("LoginPage", () => {
     );
     renderPage();
     await fillAndSubmit(user);
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/admin"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/admin"));
   });
 
   it("honors safe callbackUrl", async () => {
@@ -95,7 +95,7 @@ describe("LoginPage", () => {
     );
     renderPage({ callbackUrl: "/ru/dashboard/messages" });
     await fillAndSubmit(user);
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/ru/dashboard/messages"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/dashboard/messages"));
   });
 
   it("shows invalid-credentials error on 401", async () => {

@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n";
 import { registerSchema, type RegisterInput } from "@/lib/validation/auth-schemas";
 import { registerViaApi } from "@/lib/api/endpoints/auth";
@@ -11,7 +11,6 @@ import { AuthCard } from "../auth-card";
 
 export default function RegisterPage() {
   const t = useTranslations("Auth.register");
-  const locale = useLocale();
   const router = useRouter();
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -27,7 +26,7 @@ export default function RegisterPage() {
         lastName: data.lastName || undefined,
       };
       await registerViaApi(body);
-      router.replace(`/${locale}/verify-email-info`);
+      router.replace("/verify-email-info");
     } catch (e) {
       if (e instanceof ApiError) {
         if (e.status === 409) setError("email", { message: e.detail || "exists" });

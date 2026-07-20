@@ -1,14 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link, useRouter } from "@/i18n";
 import { verifyEmailViaApi } from "@/lib/api/endpoints/auth";
 import { AuthCard } from "../auth-card";
 
 export default function VerifyEmailInfoPage() {
   const t = useTranslations("Auth.verifyEmailInfo");
-  const locale = useLocale();
   const router = useRouter();
   const [token, setToken] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +18,7 @@ export default function VerifyEmailInfoPage() {
     setError(null);
     try {
       await verifyEmailViaApi(token.trim());
-      router.replace(`/${locale}/login?verified=1`);
+      router.replace("/login?verified=1");
     } catch {
       setError(t("devHelperError"));
     }
