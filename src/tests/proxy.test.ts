@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import { forwardToBackend } from "@/app/api/proxy/[...path]/route";
+import { forwardToBackend } from "@/lib/api/proxy-handler";
 import type { NextRequest } from "next/server";
 
 const API_BASE = "http://localhost:8080/api/v1";

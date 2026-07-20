@@ -1,0 +1,7 @@
+{
+  "Nav": { "home": "Home", "catalog": "Catalog", "login": "Login", "register": "Register", "logout": "Logout", "dashboard": "Dashboard", "admin": "Admin" },
+  "Locale": { "ru": "Russian", "en": "English", "switch": "Language" },
+  "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected" },
+  "Home": { "welcome": "Pet marketplace" },
+  "NotFound": { "title": "Page not found", "back": "Home" }
+}

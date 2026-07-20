@@ -1,0 +1,7 @@
+{
+  "Nav": { "home": "Главная", "catalog": "Каталог", "login": "Войти", "register": "Регистрация", "logout": "Выйти", "dashboard": "Кабинет", "admin": "Админ" },
+  "Locale": { "ru": "Русский", "en": "English", "switch": "Язык" },
+  "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено" },
+  "Home": { "welcome": "Маркетплейс животных" },
+  "NotFound": { "title": "Страница не найдена", "back": "На главную" }
+}
