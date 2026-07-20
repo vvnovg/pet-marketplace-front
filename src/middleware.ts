@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
   const intlRes = intlMiddleware(req);
   // Determine the pathname without locale prefix
   const pathname = req.nextUrl.pathname;
-  const stripped = pathname.replace(new RegExp(`^/(${locales.join("|")})`), "") || "/";
+  const stripped = pathname.replace(new RegExp(`^/(${locales.join("|")})(?=/|$)`), "") || "/";
   const isProtected = PROTECTED.some((p) => stripped.startsWith(p));
   if (isProtected) {
     const cookie = req.headers.get("cookie") ?? "";

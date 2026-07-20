@@ -23,13 +23,17 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <Providers>
-        <Header />
-        <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
-        <Footer />
-        <Toaster richColors position="top-right" />
-      </Providers>
-    </NextIntlClientProvider>
+    <html lang={locale} suppressHydrationWarning>
+      <body className="min-h-screen bg-background text-foreground">
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <Header />
+            <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
+            <Footer />
+            <Toaster richColors position="top-right" />
+          </Providers>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   );
 }

@@ -4,9 +4,25 @@ import type { TokenResponse } from "@/types/api";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080/api/v1";
 
+const HOP_BY_HOP_OR_ENCODING_HEADERS = [
+  "content-encoding",
+  "content-length",
+  "transfer-encoding",
+  "connection",
+  "set-cookie",
+];
+
+function sanitizeHeaders(src: Headers): Headers {
+  const out = new Headers(src);
+  for (const key of HOP_BY_HOP_OR_ENCODING_HEADERS) {
+    out.delete(key);
+  }
+  return out;
+}
+
 export async function forwardToBackend(req: NextRequest, pathSegments: string[]): Promise<NextResponse> {
   const path = pathSegments.join("/");
-  if (path.startsWith("auth/")) {
+  if (pathSegments.some((seg) => seg === "auth")) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
 
@@ -17,14 +33,21 @@ export async function forwardToBackend(req: NextRequest, pathSegments: string[])
   const { accessToken, refreshToken } = getAuthCookies(req);
   const headers = new Headers(req.headers);
   headers.delete("cookie");
+  // Never forward a client-supplied Authorization header; the backend should
+  // only ever see a cookie-derived bearer (or none).
+  headers.delete("authorization");
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
 
-  const doFetch = () => fetch(target, {
-    method: req.method,
-    headers,
-    body: req.method === "GET" || req.method === "HEAD" ? undefined : req.body,
-    duplex: "half",
-  } as RequestInit);
+  // Buffer the request body once up front so the post-refresh retry can replay
+  // the exact same payload without hitting a consumed/locked ReadableStream.
+  const raw = req.method === "GET" || req.method === "HEAD" ? undefined : await req.text();
+
+  const doFetch = () =>
+    fetch(target, {
+      method: req.method,
+      headers,
+      body: raw,
+    });
 
   let upstream = await doFetch();
 
@@ -38,15 +61,19 @@ export async function forwardToBackend(req: NextRequest, pathSegments: string[])
       const tokens = (await refreshed.json()) as TokenResponse;
       headers.set("authorization", `Bearer ${tokens.accessToken}`);
       upstream = await doFetch();
-      const res = NextResponse.next({ request: { headers } });
-      // Build a new response from upstream body + set refreshed cookies
       const body = await upstream.text();
-      const out = new NextResponse(body, { status: upstream.status, headers: new Headers(upstream.headers) });
+      const out = new NextResponse(body, {
+        status: upstream.status,
+        headers: sanitizeHeaders(upstream.headers),
+      });
       setAuthCookies(out, tokens);
       return out;
     }
   }
 
   const body = await upstream.text();
-  return new NextResponse(body, { status: upstream.status, headers: new Headers(upstream.headers) });
+  return new NextResponse(body, {
+    status: upstream.status,
+    headers: sanitizeHeaders(upstream.headers),
+  });
 }
