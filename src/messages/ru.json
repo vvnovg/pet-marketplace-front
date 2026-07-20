@@ -3,5 +3,17 @@
   "Locale": { "ru": "Русский", "en": "English", "switch": "Язык" },
   "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено" },
   "Home": { "welcome": "Маркетплейс животных" },
-  "NotFound": { "title": "Страница не найдена", "back": "На главную" }
+  "NotFound": { "title": "Страница не найдена", "back": "На главную" },
+  "Auth": {
+    "login": { "title": "Вход", "email": "Email", "password": "Пароль", "submit": "Войти", "registerLink": "Регистрация", "forgotLink": "Забыли пароль?", "verifiedBanner": "Email подтверждён. Теперь можно войти.", "resetBanner": "Пароль сброшен. Войдите с новым паролем.", "invalidCredentials": "Неверный email или пароль, либо email не подтверждён." },
+    "register": { "title": "Регистрация", "email": "Email", "password": "Пароль", "phone": "Телефон", "firstName": "Имя", "lastName": "Фамилия", "submit": "Зарегистрироваться", "loginLink": "Войти", "success": "Аккаунт создан." },
+    "verifyEmailInfo": { "title": "Подтвердите email", "success": "Аккаунт создан. Проверьте почту для подтверждения.", "devHelperLabel": "Вставить токен из Redis (dev)", "devHelperButton": "Подтвердить", "devHelperError": "Неверный или просроченный токен.", "invalidToken": "Неверный или просроченный токен.", "backToRegister": "Назад к регистрации" },
+    "verifyEmail": { "loading": "Подтверждение…", "success": "Email подтверждён. Теперь можно войти.", "error": "Ссылка недействительна или просрочена.", "backToRegister": "К регистрации", "toLogin": "Войти" },
+    "forgotPassword": { "title": "Восстановление пароля", "email": "Email", "submit": "Отправить ссылку", "success": "Если аккаунт существует, письмо для сброса отправлено." },
+    "resetPassword": { "title": "Сброс пароля", "newPassword": "Новый пароль", "confirm": "Повторите пароль", "submit": "Сбросить", "error": "Токен недействителен или просрочен.", "mismatch": "Пароли не совпадают." },
+    "userMenu": { "dashboard": "Кабинет", "profile": "Профиль", "admin": "Админ", "logout": "Выйти" }
+  },
+  "Validation": { "emailInvalid": "Некорректный email", "passwordMin": "Минимум 8 символов", "required": "Обязательное поле", "tooLong": "Слишком длинное значение", "mismatch": "Пароли не совпадают" },
+  "Dashboard": { "welcome": "Добро пожаловать, {email}", "profile": "Профиль", "myListings": "Мои объявления", "bookings": "Бронирования", "messages": "Сообщения", "favorites": "Избранное", "subscriptions": "Подписки", "comingSoon": "Появится в следующих фазах" },
+  "Admin": { "title": "Админ-панель", "users": "Пользователи", "pendingListings": "Объявления на модерации", "pendingReviews": "Отзывы на модерации", "statistics": "Статистика", "comingSoon": "Появится в фазе 8" }
 }

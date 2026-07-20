@@ -3,5 +3,17 @@
   "Locale": { "ru": "Russian", "en": "English", "switch": "Language" },
   "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected" },
   "Home": { "welcome": "Pet marketplace" },
-  "NotFound": { "title": "Page not found", "back": "Home" }
+  "NotFound": { "title": "Page not found", "back": "Home" },
+  "Auth": {
+    "login": { "title": "Sign in", "email": "Email", "password": "Password", "submit": "Sign in", "registerLink": "Register", "forgotLink": "Forgot password?", "verifiedBanner": "Email verified. You can sign in now.", "resetBanner": "Password reset. Sign in with your new password.", "invalidCredentials": "Wrong email or password, or email not verified." },
+    "register": { "title": "Register", "email": "Email", "password": "Password", "phone": "Phone", "firstName": "First name", "lastName": "Last name", "submit": "Register", "loginLink": "Sign in", "success": "Account created." },
+    "verifyEmailInfo": { "title": "Verify your email", "success": "Account created. Check your email to confirm.", "devHelperLabel": "Paste token from Redis (dev)", "devHelperButton": "Verify", "devHelperError": "Invalid or expired token.", "invalidToken": "Invalid or expired token.", "backToRegister": "Back to register" },
+    "verifyEmail": { "loading": "Verifying…", "success": "Email verified. You can sign in now.", "error": "The link is invalid or expired.", "backToRegister": "To register", "toLogin": "Sign in" },
+    "forgotPassword": { "title": "Reset password", "email": "Email", "submit": "Send link", "success": "If the account exists, a reset email has been sent." },
+    "resetPassword": { "title": "Reset password", "newPassword": "New password", "confirm": "Confirm password", "submit": "Reset", "error": "Token is invalid or expired.", "mismatch": "Passwords do not match." },
+    "userMenu": { "dashboard": "Dashboard", "profile": "Profile", "admin": "Admin", "logout": "Logout" }
+  },
+  "Validation": { "emailInvalid": "Invalid email", "passwordMin": "At least 8 characters", "required": "Required", "tooLong": "Value too long", "mismatch": "Passwords do not match" },
+  "Dashboard": { "welcome": "Welcome, {email}", "profile": "Profile", "myListings": "My listings", "bookings": "Bookings", "messages": "Messages", "favorites": "Favorites", "subscriptions": "Subscriptions", "comingSoon": "Coming in later phases" },
+  "Admin": { "title": "Admin panel", "users": "Users", "pendingListings": "Pending listings", "pendingReviews": "Pending reviews", "statistics": "Statistics", "comingSoon": "Coming in phase 8" }
 }
