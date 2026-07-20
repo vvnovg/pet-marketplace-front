@@ -14,7 +14,9 @@ beforeEach(() => {
 afterEach(() => { server.resetHandlers(); server.close(); });
 
 const replace = vi.fn();
-vi.mock("@/i18n", () => ({ useRouter: () => ({ replace }), usePathname: () => "/dashboard" }));
+let currentPathname = "/dashboard";
+const setPathname = (p: string) => { currentPathname = p; };
+vi.mock("@/i18n", () => ({ useRouter: () => ({ replace }), usePathname: () => currentPathname }));
 vi.mock("next-intl", () => ({ useLocale: () => "ru" }));
 
 function wrapper(qc: QueryClient) {
@@ -55,5 +57,27 @@ describe("SessionProvider", () => {
     const Probe = () => { useQuery({ queryKey: ["listings"], queryFn: async () => { const r = await fetch("/api/proxy/listings"); if (!r.ok) throw new ApiError(401, "x", "y"); return r.json(); } }); return <Show />; };
     render(<Probe />, { wrapper: wrapper(qc) });
     await waitFor(() => expect(replace).toHaveBeenCalledWith(expect.stringContaining("/login?callbackUrl=")));
+  });
+
+  it("resets 401 redirect guard on pathname change so a second non-session 401 still redirects", async () => {
+    server.use(
+      http.get("*/api/proxy/users/me", () => HttpResponse.json({ id: "u1", email: "a@b.co", role: "BUYER", verified: true, active: true, createdAt: "t", updatedAt: "t" })),
+      http.get("*/api/proxy/listings", () => new HttpResponse(null, { status: 401 })),
+    );
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const Probe = ({ k = "listings" }: { k?: string }) => {
+      useQuery({ queryKey: [k], queryFn: async () => { const r = await fetch("/api/proxy/listings"); if (!r.ok) throw new ApiError(401, "x", "y"); return r.json(); } });
+      return <Show />;
+    };
+    const { rerender } = render(<Probe />, { wrapper: wrapper(qc) });
+    // First non-session 401 → first redirect
+    await waitFor(() => expect(replace).toHaveBeenCalledWith(expect.stringContaining("/login?callbackUrl=")));
+    expect(replace).toHaveBeenCalledTimes(1);
+    // Simulate the redirect landing on /login: pathname change re-runs the effect,
+    // which must reset the one-shot guard so a later 401 can redirect again.
+    setPathname("/login");
+    rerender(<Probe k="listings2" />);
+    // Second non-session 401 → second redirect (fails without the ref reset)
+    await waitFor(() => expect(replace).toHaveBeenCalledTimes(2));
   });
 });

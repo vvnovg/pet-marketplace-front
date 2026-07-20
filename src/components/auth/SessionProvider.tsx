@@ -30,6 +30,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   // Global 401: a non-session query that fails with 401 means the proxy's refresh
   // already failed. Clear session and redirect to login once (ref guard prevents loops).
   useEffect(() => {
+    redirecting.current = false;
     return qc.getQueryCache().subscribe((event) => {
       const err = event.query.state.error;
       if (
