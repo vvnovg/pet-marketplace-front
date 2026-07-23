@@ -1,8 +1,34 @@
 {
   "Nav": { "home": "Главная", "catalog": "Каталог", "login": "Войти", "register": "Регистрация", "logout": "Выйти", "dashboard": "Кабинет", "admin": "Админ" },
   "Locale": { "ru": "Русский", "en": "English", "switch": "Язык" },
-  "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено", "PENDING": "Ожидает", "CONFIRMED": "Подтверждено", "CANCELLED": "Отменено", "COMPLETED": "Завершено", "APPROVED": "Одобрено", "BUYER": "Покупатель", "SELLER": "Продавец", "ADMIN": "Администратор", "MODERATOR": "Модератор" },
-  "Home": { "welcome": "Маркетплейс животных" },
+  "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено", "PENDING": "Ожидает", "CONFIRMED": "Подтверждено", "CANCELLED": "Отменено", "COMPLETED": "Завершено", "APPROVED": "Одобрено", "BUYER": "Покупатель", "SELLER": "Продавец", "ADMIN": "Администратор", "MODERATOR": "Модератор", "MALE": "Самец", "FEMALE": "Самка" },
+  "Home": { "welcome": "Маркетплейс животных", "subtitle": "Найдите своего питомца", "goToCatalog": "Перейти в каталог" },
+  "Catalog": {
+    "title": "Каталог",
+    "category": "Категория", "breed": "Порода", "breedPlaceholder": "Сначала выберите категорию",
+    "city": "Город", "cityPlaceholder": "Город",
+    "priceMin": "Цена от", "priceMax": "до", "gender": "Пол", "genderAny": "Любой",
+    "ageMin": "Возраст от", "ageMax": "до", "ageUnit": "мес",
+    "reset": "Сбросить", "sortBy": "Сортировка",
+    "sort": { "newest": "Новые", "priceAsc": "Цена ↑", "priceDesc": "Цена ↓", "popular": "Популярные", "sellerRating": "По рейтингу продавца" },
+    "resultsCount": "{count} объявлений",
+    "empty": "Объявления не найдены", "loadError": "Не удалось загрузить объявления", "retry": "Повторить"
+  },
+  "Listing": {
+    "seller": "Продавец", "location": "Локация", "age": "Возраст", "ageUnit": "мес", "gender": "Пол",
+    "color": "Окрас", "weight": "Вес", "weightUnit": "кг", "healthInfo": "Здоровье",
+    "hasVaccination": "Привит", "hasDocuments": "Документы", "yes": "да", "no": "нет", "unknown": "—",
+    "views": "Просмотры", "posted": "Размещено", "breed": "Порода", "category": "Категория",
+    "notFound": "Объявление не найдено", "loadError": "Не удалось загрузить объявление",
+    "addToFavorites": "В избранное", "removeFromFavorites": "Убрать из избранного", "loginToFav": "Войдите, чтобы сохранить в избранное",
+    "book": "Забронировать", "bookingMessage": "Сообщение продавцу", "bookingMessagePlaceholder": "Необязательно",
+    "bookingSubmit": "Отправить заявку", "bookingCancel": "Отмена", "bookingSuccess": "Заявка отправлена",
+    "bookingError": "Не удалось создать заявку", "bookingAlreadyExists": "Вы уже забронировали это объявление"
+  },
+  "Favorites": {
+    "title": "Избранное", "empty": "В избранном пока пусто", "loginRequired": "Войдите, чтобы видеть избранное",
+    "loadError": "Не удалось загрузить избранное", "retry": "Повторить"
+  },
   "NotFound": { "title": "Страница не найдена", "back": "На главную" },
   "Auth": {
     "login": { "title": "Вход", "email": "Email", "password": "Пароль", "submit": "Войти", "registerLink": "Регистрация", "forgotLink": "Забыли пароль?", "verifiedBanner": "Email подтверждён. Теперь можно войти.", "resetBanner": "Пароль сброшен. Войдите с новым паролем.", "invalidCredentials": "Неверный email или пароль, либо email не подтверждён." },

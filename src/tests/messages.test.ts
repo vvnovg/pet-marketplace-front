@@ -45,6 +45,18 @@ describe("auth message keys exist in both locales", () => {
     "Status.ACTIVE", "Status.RESERVED", "Status.SOLD", "Status.DRAFT", "Status.PENDING_MODERATION", "Status.ARCHIVED", "Status.REJECTED",
     "Status.PENDING", "Status.CONFIRMED", "Status.CANCELLED", "Status.COMPLETED", "Status.APPROVED",
     "Status.BUYER", "Status.SELLER", "Status.ADMIN", "Status.MODERATOR",
+    "Status.MALE", "Status.FEMALE",
+    "Home.welcome", "Home.subtitle", "Home.goToCatalog",
+    "Catalog.title", "Catalog.category", "Catalog.breed", "Catalog.breedPlaceholder", "Catalog.city", "Catalog.cityPlaceholder",
+    "Catalog.priceMin", "Catalog.priceMax", "Catalog.gender", "Catalog.genderAny", "Catalog.ageMin", "Catalog.ageMax", "Catalog.ageUnit",
+    "Catalog.reset", "Catalog.sortBy", "Catalog.sort.newest", "Catalog.sort.priceAsc", "Catalog.sort.priceDesc", "Catalog.sort.popular", "Catalog.sort.sellerRating",
+    "Catalog.resultsCount", "Catalog.empty", "Catalog.loadError", "Catalog.retry",
+    "Listing.seller", "Listing.location", "Listing.age", "Listing.ageUnit", "Listing.gender", "Listing.color", "Listing.weight", "Listing.weightUnit",
+    "Listing.healthInfo", "Listing.hasVaccination", "Listing.hasDocuments", "Listing.yes", "Listing.no", "Listing.unknown",
+    "Listing.views", "Listing.posted", "Listing.breed", "Listing.category", "Listing.notFound", "Listing.loadError",
+    "Listing.addToFavorites", "Listing.removeFromFavorites", "Listing.loginToFav", "Listing.book",
+    "Listing.bookingMessage", "Listing.bookingMessagePlaceholder", "Listing.bookingSubmit", "Listing.bookingCancel", "Listing.bookingSuccess", "Listing.bookingError", "Listing.bookingAlreadyExists",
+    "Favorites.title", "Favorites.empty", "Favorites.loginRequired", "Favorites.loadError", "Favorites.retry",
   ] as const;
 
   const get = (obj: unknown, path: string): unknown =>
