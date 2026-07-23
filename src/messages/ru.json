@@ -20,7 +20,7 @@
     "users": "Пользователи", "pendingListings": "Объявления на модерации", "pendingReviews": "Отзывы на модерации", "statistics": "Статистика",
     "back": "Назад в админ-панель",
     "common": {
-      "refresh": "Обновить", "prev": "Назад", "next": "Далее", "pageInfo": "Стр. {number} из {total} ({elements})",
+      "refresh": "Обновить", "prev": "Назад", "next": "Следующая", "pageInfo": "Стр. {number} из {total} ({elements})",
       "pageSize": "Размер страницы", "empty": "Нет данных", "loadingError": "Ошибка загрузки", "retry": "Повторить",
       "cancel": "Отмена", "confirmApprove": "Подтвердить", "confirmReject": "Подтвердить", "submitting": "Выполняется…",
       "reason": "Причина", "reasonPlaceholder": "Укажите причину…", "reasonRequired": "Причина обязательна", "reasonOptional": "Причина необязательна", "reasonTooLong": "Слишком длинная причина",
