@@ -129,8 +129,9 @@ The browser talks only to the frontend (auth cookies `pmp_access`/`pmp_refresh` 
 
 ### 5. Rebuilding after a backend address/port change
 
-`NEXT_PUBLIC_API_BASE` is inlined at build time. If the backend moves, update `.env` and rebuild:
+`NEXT_PUBLIC_API_BASE` is inlined at build time. If the backend moves, override the build-arg default in a `.env` (compose auto-loads it) and rebuild:
 
 ```bash
+echo "NEXT_PUBLIC_API_BASE=http://<new-host>:<new-port>/api/v1" > .env
 docker compose up -d --build
 ```
