@@ -14,7 +14,6 @@ export default function AdminPage() {
         <Link href="/admin/reviews/pending" className="rounded border px-3 py-2">{t("pendingReviews")}</Link>
         <Link href="/admin/statistics" className="rounded border px-3 py-2">{t("statistics")}</Link>
       </nav>
-      <p className="text-sm text-muted-foreground">{t("comingSoon")}</p>
     </div>
   );
 }
