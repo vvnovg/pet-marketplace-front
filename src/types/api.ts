@@ -149,6 +149,29 @@ export interface CategoryWithBreeds {
   breeds: Breed[];
 }
 
+export interface Category {
+  id: UUID;
+  name: string;
+  slug: string;
+  children: Category[];
+  breeds: Breed[];
+}
+
+export interface ListingSearchParams {
+  categoryId?: string | null;
+  breedId?: string | null;
+  city?: string | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  gender?: ListingGender | null;
+  minAge?: number | null;
+  maxAge?: number | null;
+  sortBy?: string;
+  sortDirection?: "ASC" | "DESC";
+  page?: number;
+  size?: number;
+}
+
 export interface Subscription {
   id: UUID;
   filters: Record<string, unknown>;
