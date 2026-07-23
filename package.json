@@ -1,6 +1,7 @@
 {
   "name": "pet-marketplace-front",
   "version": "0.1.0",
+  "packageManager": "pnpm@11.15.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
