@@ -86,4 +86,23 @@ describe("UsersPage", () => {
     await screen.findByText("me@x.co");
     expect(screen.getByRole("button", { name: ru.Admin.users.block })).toBeDisabled();
   });
+
+  it("preserves initial page param from deep-link URL on mount", async () => {
+    const originalSearch = window.location.search;
+    window.history.replaceState(null, "", "/admin/users?search=foo&page=2");
+    let requestedPage: string | null = null;
+    server.use(http.get("*/api/proxy/admin/users", ({ request }) => {
+      const url = new URL(request.url);
+      requestedPage = url.searchParams.get("page");
+      return HttpResponse.json({
+        content: [adminUser("u1", "a@b.co")], totalElements: 1, totalPages: 1, number: 2, size: 10, first: false, last: true, empty: false,
+      });
+    }));
+    try {
+      renderPage();
+      await waitFor(() => expect(requestedPage).toBe("2"));
+    } finally {
+      window.history.replaceState(null, "", originalSearch ? `?${originalSearch.replace(/^\?/, "")}` : "/");
+    }
+  });
 });

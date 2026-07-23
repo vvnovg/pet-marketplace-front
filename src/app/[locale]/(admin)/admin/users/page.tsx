@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -80,7 +80,12 @@ export default function UsersPage() {
   }, [filters]);
 
   // Reset to page 0 when filters change (debounced search included).
-  useEffect(() => { setFilters((f) => ({ ...f, page: 0 })); }, [debouncedSearch, filters.role, filters.active, filters.verified]);
+  // Skip the first run so the initial page param from a deep-link URL is preserved.
+  const mounted = useRef(false);
+  useEffect(() => {
+    if (!mounted.current) { mounted.current = true; return; }
+    setFilters((f) => ({ ...f, page: 0 }));
+  }, [debouncedSearch, filters.role, filters.active, filters.verified]);
 
   const [dialog, setDialog] = useState<{ user: AdminUser; kind: "block" | "unblock" } | null>(null);
 
