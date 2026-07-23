@@ -1,8 +1,34 @@
 {
   "Nav": { "home": "Home", "catalog": "Catalog", "login": "Login", "register": "Register", "logout": "Logout", "dashboard": "Dashboard", "admin": "Admin" },
   "Locale": { "ru": "Russian", "en": "English", "switch": "Language" },
-  "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected", "PENDING": "Pending", "CONFIRMED": "Confirmed", "CANCELLED": "Cancelled", "COMPLETED": "Completed", "APPROVED": "Approved", "BUYER": "Buyer", "SELLER": "Seller", "ADMIN": "Administrator", "MODERATOR": "Moderator" },
-  "Home": { "welcome": "Pet marketplace" },
+  "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected", "PENDING": "Pending", "CONFIRMED": "Confirmed", "CANCELLED": "Cancelled", "COMPLETED": "Completed", "APPROVED": "Approved", "BUYER": "Buyer", "SELLER": "Seller", "ADMIN": "Administrator", "MODERATOR": "Moderator", "MALE": "Male", "FEMALE": "Female" },
+  "Home": { "welcome": "Pet marketplace", "subtitle": "Find your pet", "goToCatalog": "Go to catalog" },
+  "Catalog": {
+    "title": "Catalog",
+    "category": "Category", "breed": "Breed", "breedPlaceholder": "Pick a category first",
+    "city": "City", "cityPlaceholder": "City",
+    "priceMin": "Price from", "priceMax": "to", "gender": "Gender", "genderAny": "Any",
+    "ageMin": "Age from", "ageMax": "to", "ageUnit": "mo",
+    "reset": "Reset", "sortBy": "Sort by",
+    "sort": { "newest": "Newest", "priceAsc": "Price ↑", "priceDesc": "Price ↓", "popular": "Popular", "sellerRating": "By seller rating" },
+    "resultsCount": "{count} listings",
+    "empty": "No listings found", "loadError": "Failed to load listings", "retry": "Retry"
+  },
+  "Listing": {
+    "seller": "Seller", "location": "Location", "age": "Age", "ageUnit": "mo", "gender": "Gender",
+    "color": "Color", "weight": "Weight", "weightUnit": "kg", "healthInfo": "Health",
+    "hasVaccination": "Vaccinated", "hasDocuments": "Documents", "yes": "yes", "no": "no", "unknown": "—",
+    "views": "Views", "posted": "Posted", "breed": "Breed", "category": "Category",
+    "notFound": "Listing not found", "loadError": "Failed to load listing",
+    "addToFavorites": "Add to favorites", "removeFromFavorites": "Remove from favorites", "loginToFav": "Log in to save to favorites",
+    "book": "Book", "bookingMessage": "Message to seller", "bookingMessagePlaceholder": "Optional",
+    "bookingSubmit": "Send request", "bookingCancel": "Cancel", "bookingSuccess": "Request sent",
+    "bookingError": "Failed to create booking", "bookingAlreadyExists": "You already booked this listing"
+  },
+  "Favorites": {
+    "title": "Favorites", "empty": "No favorites yet", "loginRequired": "Log in to see favorites",
+    "loadError": "Failed to load favorites", "retry": "Retry"
+  },
   "NotFound": { "title": "Page not found", "back": "Home" },
   "Auth": {
     "login": { "title": "Sign in", "email": "Email", "password": "Password", "submit": "Sign in", "registerLink": "Register", "forgotLink": "Forgot password?", "verifiedBanner": "Email verified. You can sign in now.", "resetBanner": "Password reset. Sign in with your new password.", "invalidCredentials": "Wrong email or password, or email not verified." },
