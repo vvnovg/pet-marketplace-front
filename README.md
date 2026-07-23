@@ -80,3 +80,56 @@ pnpm test && pnpm tsc --noEmit && pnpm build && pnpm exec playwright test
 - `e2e/` — Playwright specs.
 
 See `CLAUDE.md` for the full architecture, security model, and conventions.
+
+## Deploy (frontend distribution)
+
+This is the **frontend** distribution (Next.js). It is the public entry point on `:3000`. It requires the **backend distribution** (`pet-marketplace` repo) already running on the same host on `:8080` (see that repo's README). Deploy order: backend first, then this.
+
+### 1. Prerequisites
+
+The same Debian host prepared for the backend (Docker Engine + Compose plugin, git). See the backend README "Deploy (backend distribution) → 1. Prepare the Debian host".
+
+### 2. Configure and start the frontend
+
+```bash
+git clone <frontend-repo-url> pet-marketplace-front && cd pet-marketplace-front
+cp .env.example .env
+# NEXT_PUBLIC_API_BASE defaults to http://host.docker.internal:8080/api/v1 (reaches the backend on the same host)
+docker compose up -d --build
+```
+
+Verify locally on the host:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/   # 200
+```
+
+### 3. Firewall
+
+The backend distribution's README already opens `:3000` on `enp1s0` and keeps `:8080` private. No extra firewall step here.
+
+### 4. Publish via the Keenetic cloud
+
+`netcraze.link` is a KeenDNS domain: the Keenetic cloud terminates HTTPS (Let's Encrypt cert `novgorodtsev.netcraze.link`) and tunnels to the Keenetic router, which forwards to an internal `IP:port`.
+
+In the Keenetic web GUI (KeenDNS / "Доступ из интернета"), retarget the `www.novgorodtsev.netcraze.link` cloud publication to:
+
+- internal host: `192.168.1.81`
+- port: `3000`
+- protocol: HTTP (TLS is handled by the cloud)
+
+Then verify publicly:
+
+```bash
+curl -fsS https://www.novgorodtsev.netcraze.link/ -o /dev/null -w "%{http_code}\n"   # 200
+```
+
+The browser talks only to the frontend (auth cookies `pmp_access`/`pmp_refresh` are set on this domain); the backend is never reached directly from the browser, so no CORS is needed.
+
+### 5. Rebuilding after a backend address/port change
+
+`NEXT_PUBLIC_API_BASE` is inlined at build time. If the backend moves, update `.env` and rebuild:
+
+```bash
+docker compose up -d --build
+```
