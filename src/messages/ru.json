@@ -1,7 +1,7 @@
 {
   "Nav": { "home": "Главная", "catalog": "Каталог", "login": "Войти", "register": "Регистрация", "logout": "Выйти", "dashboard": "Кабинет", "admin": "Админ" },
   "Locale": { "ru": "Русский", "en": "English", "switch": "Язык" },
-  "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено" },
+  "Status": { "ACTIVE": "Активно", "RESERVED": "Забронировано", "SOLD": "Продано", "DRAFT": "Черновик", "PENDING_MODERATION": "На модерации", "ARCHIVED": "В архиве", "REJECTED": "Отклонено", "PENDING": "Ожидает", "CONFIRMED": "Подтверждено", "CANCELLED": "Отменено", "COMPLETED": "Завершено", "APPROVED": "Одобрено", "BUYER": "Покупатель", "SELLER": "Продавец", "ADMIN": "Администратор", "MODERATOR": "Модератор" },
   "Home": { "welcome": "Маркетплейс животных" },
   "NotFound": { "title": "Страница не найдена", "back": "На главную" },
   "Auth": {
@@ -15,5 +15,39 @@
   },
   "Validation": { "emailInvalid": "Некорректный email", "passwordMin": "Минимум 8 символов", "required": "Обязательное поле", "tooLong": "Слишком длинное значение", "mismatch": "Пароли не совпадают" },
   "Dashboard": { "welcome": "Добро пожаловать, {email}", "profile": "Профиль", "myListings": "Мои объявления", "bookings": "Бронирования", "messages": "Сообщения", "favorites": "Избранное", "subscriptions": "Подписки", "comingSoon": "Появится в следующих фазах" },
-  "Admin": { "title": "Админ-панель", "users": "Пользователи", "pendingListings": "Объявления на модерации", "pendingReviews": "Отзывы на модерации", "statistics": "Статистика", "comingSoon": "Появится в фазе 8" }
+  "Admin": {
+    "title": "Админ-панель",
+    "users": "Пользователи", "pendingListings": "Объявления на модерации", "pendingReviews": "Отзывы на модерации", "statistics": "Статистика",
+    "back": "Назад в админ-панель",
+    "common": {
+      "refresh": "Обновить", "prev": "Назад", "next": "Следующая", "pageInfo": "Стр. {number} из {total} ({elements})",
+      "pageSize": "Размер страницы", "empty": "Нет данных", "loadingError": "Ошибка загрузки", "retry": "Повторить",
+      "cancel": "Отмена", "confirmApprove": "Подтвердить", "confirmReject": "Подтвердить", "submitting": "Выполняется…",
+      "reason": "Причина", "reasonPlaceholder": "Укажите причину…", "reasonRequired": "Причина обязательна", "reasonOptional": "Причина необязательна", "reasonTooLong": "Слишком длинная причина",
+      "yes": "Да", "no": "Нет", "resetFilters": "Сбросить фильтры", "forbidden": "Недостаточно прав", "saved": "Сохранено", "error": "Ошибка: {detail}"
+    },
+    "status": { "listing": "Статус объявления", "booking": "Статус бронирования", "review": "Статус отзыва", "role": "Роль" },
+    "users": {
+      "title": "Пользователи", "search": "Поиск", "searchPlaceholder": "Имя или email…", "role": "Роль", "active": "Активные", "verified": "Подтверждённые",
+      "colUser": "Пользователь", "colRole": "Роль", "colVerified": "Подтверждён", "colActive": "Активен", "colReviews": "Отзывы", "colCreated": "Создан", "colActions": "Действия",
+      "block": "Заблокировать", "unblock": "Разблокировать", "changeRole": "Сменить роль", "selfGuard": "Нельзя менять свою учётную запись", "blockAdminWarn": "Вы блокируете администратора.",
+      "confirmBlockTitle": "Заблокировать пользователя?", "confirmBlockDesc": "Пользователь потеряет доступ к платформе.", "confirmUnblockTitle": "Разблокировать пользователя?",
+      "allRoles": "Все роли", "allActive": "Любой статус", "allVerified": "Любой"
+    },
+    "pendingListings": {
+      "title": "Объявления на модерации", "seller": "Продавец", "category": "Категория", "price": "Цена", "location": "Локация", "created": "Создано", "status": "Статус",
+      "approve": "Одобрить", "reject": "Отклонить", "confirmApproveTitle": "Одобрить объявление?", "confirmApproveDesc": "Объявление станет активным.",
+      "confirmRejectTitle": "Отклонить объявление?", "confirmRejectDesc": "Продавец получит уведомление с причиной.", "noImage": "Нет фото"
+    },
+    "pendingReviews": {
+      "title": "Отзывы на модерации", "author": "Автор", "recipient": "Получатель", "booking": "Бронирование", "rating": "Оценка", "comment": "Комментарий", "created": "Создано", "status": "Статус",
+      "approve": "Одобрить", "reject": "Отклонить", "confirmApproveTitle": "Одобрить отзыв?", "confirmApproveDesc": "Отзыв будет опубликован.",
+      "confirmRejectTitle": "Отклонить отзыв?", "confirmRejectDesc": "Автор будет проинформирован."
+    },
+    "statistics": {
+      "title": "Статистика", "totalUsers": "Всего пользователей", "activeUsers": "Активных пользователей",
+      "listingsToday": "Объявлений сегодня", "listingsWeek": "За неделю", "listingsMonth": "За месяц",
+      "listingsByStatus": "Объявления по статусам", "bookingsByStatus": "Бронирования по статусам", "reviewsByStatus": "Отзывы по статусам"
+    }
+  }
 }

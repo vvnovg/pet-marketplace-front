@@ -5,12 +5,19 @@ const DEFAULT_PROXY_BASE = "/api/proxy";
 export interface ClientOpts {
   baseUrl?: string; // defaults to relative "/api/proxy" (browser) — tests pass absolute
   cache?: RequestCache;
+  headers?: Record<string, string>;
 }
 
 function buildUrl(path: string, opts: ClientOpts): string {
   const origin = (opts.baseUrl ?? "").replace(/\/$/, "");
   const p = path.startsWith("/") ? path.slice(1) : path;
   return `${origin}${DEFAULT_PROXY_BASE}/${p}`;
+}
+
+function reqHeaders(opts: ClientOpts, json = false): Record<string, string> {
+  const h: Record<string, string> = { ...(opts.headers ?? {}) };
+  if (json) h["content-type"] = "application/json";
+  return h;
 }
 
 async function handle<T>(res: Response): Promise<T> {
@@ -21,34 +28,26 @@ async function handle<T>(res: Response): Promise<T> {
 }
 
 export async function apiGet<T>(path: string, opts: ClientOpts = {}): Promise<T> {
-  return handle<T>(await fetch(buildUrl(path, opts), { method: "GET", cache: opts.cache ?? "no-store" }));
+  return handle<T>(await fetch(buildUrl(path, opts), { method: "GET", cache: opts.cache ?? "no-store", headers: reqHeaders(opts) }));
 }
 
 export async function apiPost<T>(path: string, body: unknown, opts: ClientOpts = {}): Promise<T> {
-  return handle<T>(await fetch(buildUrl(path, opts), {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  }));
+  return handle<T>(await fetch(buildUrl(path, opts), { method: "POST", headers: reqHeaders(opts, true), body: JSON.stringify(body) }));
 }
 
 export async function apiPut<T>(path: string, body: unknown, opts: ClientOpts = {}): Promise<T> {
-  return handle<T>(await fetch(buildUrl(path, opts), {
-    method: "PUT",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
-  }));
+  return handle<T>(await fetch(buildUrl(path, opts), { method: "PUT", headers: reqHeaders(opts, true), body: JSON.stringify(body) }));
 }
 
 export async function apiDelete(path: string, opts: ClientOpts = {}): Promise<void> {
-  const res = await fetch(buildUrl(path, opts), { method: "DELETE" });
+  const res = await fetch(buildUrl(path, opts), { method: "DELETE", headers: reqHeaders(opts) });
   if (!res.ok) return parseProblem(res);
 }
 
 export async function apiUpload<T>(path: string, file: File | Blob, fieldName = "file", opts: ClientOpts = {}): Promise<T> {
   const fd = new FormData();
   fd.append(fieldName, file);
-  return handle<T>(await fetch(buildUrl(path, opts), { method: "POST", body: fd }));
+  return handle<T>(await fetch(buildUrl(path, opts), { method: "POST", headers: opts.headers ?? {}, body: fd }));
 }
 
 export { ApiError };

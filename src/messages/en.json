@@ -1,7 +1,7 @@
 {
   "Nav": { "home": "Home", "catalog": "Catalog", "login": "Login", "register": "Register", "logout": "Logout", "dashboard": "Dashboard", "admin": "Admin" },
   "Locale": { "ru": "Russian", "en": "English", "switch": "Language" },
-  "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected" },
+  "Status": { "ACTIVE": "Active", "RESERVED": "Reserved", "SOLD": "Sold", "DRAFT": "Draft", "PENDING_MODERATION": "Pending review", "ARCHIVED": "Archived", "REJECTED": "Rejected", "PENDING": "Pending", "CONFIRMED": "Confirmed", "CANCELLED": "Cancelled", "COMPLETED": "Completed", "APPROVED": "Approved", "BUYER": "Buyer", "SELLER": "Seller", "ADMIN": "Administrator", "MODERATOR": "Moderator" },
   "Home": { "welcome": "Pet marketplace" },
   "NotFound": { "title": "Page not found", "back": "Home" },
   "Auth": {
@@ -15,5 +15,39 @@
   },
   "Validation": { "emailInvalid": "Invalid email", "passwordMin": "At least 8 characters", "required": "Required", "tooLong": "Value too long", "mismatch": "Passwords do not match" },
   "Dashboard": { "welcome": "Welcome, {email}", "profile": "Profile", "myListings": "My listings", "bookings": "Bookings", "messages": "Messages", "favorites": "Favorites", "subscriptions": "Subscriptions", "comingSoon": "Coming in later phases" },
-  "Admin": { "title": "Admin panel", "users": "Users", "pendingListings": "Pending listings", "pendingReviews": "Pending reviews", "statistics": "Statistics", "comingSoon": "Coming in phase 8" }
+  "Admin": {
+    "title": "Admin panel",
+    "users": "Users", "pendingListings": "Pending listings", "pendingReviews": "Pending reviews", "statistics": "Statistics",
+    "back": "Back to admin panel",
+    "common": {
+      "refresh": "Refresh", "prev": "Prev", "next": "Next", "pageInfo": "Page {number} of {total} ({elements})",
+      "pageSize": "Page size", "empty": "No data", "loadingError": "Loading error", "retry": "Retry",
+      "cancel": "Cancel", "confirmApprove": "Confirm", "confirmReject": "Confirm", "submitting": "Submitting…",
+      "reason": "Reason", "reasonPlaceholder": "State the reason…", "reasonRequired": "Reason is required", "reasonOptional": "Reason is optional", "reasonTooLong": "Reason too long",
+      "yes": "Yes", "no": "No", "resetFilters": "Reset filters", "forbidden": "Not enough permissions", "saved": "Saved", "error": "Error: {detail}"
+    },
+    "status": { "listing": "Listing status", "booking": "Booking status", "review": "Review status", "role": "Role" },
+    "users": {
+      "title": "Users", "search": "Search", "searchPlaceholder": "Name or email…", "role": "Role", "active": "Active", "verified": "Verified",
+      "colUser": "User", "colRole": "Role", "colVerified": "Verified", "colActive": "Active", "colReviews": "Reviews", "colCreated": "Created", "colActions": "Actions",
+      "block": "Block", "unblock": "Unblock", "changeRole": "Change role", "selfGuard": "Cannot modify your own account", "blockAdminWarn": "You are blocking an administrator.",
+      "confirmBlockTitle": "Block user?", "confirmBlockDesc": "The user will lose platform access.", "confirmUnblockTitle": "Unblock user?",
+      "allRoles": "All roles", "allActive": "Any status", "allVerified": "Any"
+    },
+    "pendingListings": {
+      "title": "Pending listings", "seller": "Seller", "category": "Category", "price": "Price", "location": "Location", "created": "Created", "status": "Status",
+      "approve": "Approve", "reject": "Reject", "confirmApproveTitle": "Approve listing?", "confirmApproveDesc": "The listing will become active.",
+      "confirmRejectTitle": "Reject listing?", "confirmRejectDesc": "The seller will be notified with the reason.", "noImage": "No photo"
+    },
+    "pendingReviews": {
+      "title": "Pending reviews", "author": "Author", "recipient": "Recipient", "booking": "Booking", "rating": "Rating", "comment": "Comment", "created": "Created", "status": "Status",
+      "approve": "Approve", "reject": "Reject", "confirmApproveTitle": "Approve review?", "confirmApproveDesc": "The review will be published.",
+      "confirmRejectTitle": "Reject review?", "confirmRejectDesc": "The author will be informed."
+    },
+    "statistics": {
+      "title": "Statistics", "totalUsers": "Total users", "activeUsers": "Active users",
+      "listingsToday": "Listings today", "listingsWeek": "This week", "listingsMonth": "This month",
+      "listingsByStatus": "Listings by status", "bookingsByStatus": "Bookings by status", "reviewsByStatus": "Reviews by status"
+    }
+  }
 }
