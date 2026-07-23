@@ -6,10 +6,10 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Pagination } from "@/components/admin/Pagination";
+import { Pagination } from "@/components/shared/Pagination";
 import { DataTable } from "@/components/admin/DataTable";
 import { ConfirmModerationDialog } from "@/components/admin/ConfirmModerationDialog";
-import { StatusBadge } from "@/components/admin/StatusBadge";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 import { NextIntlClientProvider } from "next-intl";
 import ru from "@/messages/ru.json";
 

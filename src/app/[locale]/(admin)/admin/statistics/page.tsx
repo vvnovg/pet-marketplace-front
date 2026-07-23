@@ -7,7 +7,7 @@ import { Link } from "@/i18n";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { getStatistics } from "@/lib/api/endpoints/admin";
 import { ApiError } from "@/lib/api/errors";
-import { EmptyState } from "@/components/admin/EmptyState";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { AdminStatistics } from "@/types/api";

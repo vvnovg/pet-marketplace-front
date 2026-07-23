@@ -9,11 +9,11 @@ import { getAdminUsers, updateUserStatus, updateUserRole, type AdminUsersParams 
 import { ApiError } from "@/lib/api/errors";
 import { useSession } from "@/components/auth/useSession";
 import { DataTable, type Column } from "@/components/admin/DataTable";
-import { Pagination } from "@/components/admin/Pagination";
-import { StatusBadge } from "@/components/admin/StatusBadge";
-import { EmptyState } from "@/components/admin/EmptyState";
+import { Pagination } from "@/components/shared/Pagination";
+import { StatusBadge } from "@/components/shared/StatusBadge";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { ConfirmModerationDialog } from "@/components/admin/ConfirmModerationDialog";
-import { useDebouncedValue } from "@/components/admin/useDebouncedValue";
+import { useDebouncedValue } from "@/components/shared/useDebouncedValue";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
