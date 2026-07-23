@@ -6,7 +6,7 @@ const intlMiddleware = createMiddleware({ locales, defaultLocale, localePrefix: 
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8080/api/v1";
 
-const PROTECTED = ["/dashboard", "/admin"];
+const PROTECTED = ["/dashboard", "/admin", "/favorites"];
 
 export async function middleware(req: NextRequest) {
   const intlRes = intlMiddleware(req);
