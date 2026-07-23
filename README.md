@@ -93,8 +93,9 @@ The same Debian host prepared for the backend (Docker Engine + Compose plugin, g
 
 ```bash
 git clone <frontend-repo-url> pet-marketplace-front && cd pet-marketplace-front
-cp .env.example .env
-# NEXT_PUBLIC_API_BASE defaults to http://host.docker.internal:8080/api/v1 (reaches the backend on the same host)
+# No .env needed: docker-compose.yml's build-arg defaults NEXT_PUBLIC_API_BASE
+# to http://host.docker.internal:8080/api/v1 (reaches the backend on the same host).
+# Set NEXT_PUBLIC_API_BASE in a .env only to override that default.
 docker compose up -d --build
 ```
 
