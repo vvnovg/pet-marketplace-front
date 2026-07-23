@@ -167,6 +167,44 @@ export interface Page<T> {
   empty: boolean;
 }
 
+export interface AdminUser {
+  id: UUID;
+  email: string;
+  phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  avatarUrl: string | null;
+  role: Role;
+  verified: boolean;
+  active: boolean;
+  bio: string | null;
+  country: string | null;
+  city: string | null;
+  address: string | null;
+  latitude: Money | null;
+  longitude: Money | null;
+  rating: Money | null;
+  totalReviews: number | null;
+  createdAt: IsoInstant;
+  updatedAt: IsoInstant;
+}
+
+export interface AdminStatistics {
+  totalUsers: number;
+  activeUsers: number;
+  listingsByStatus: Partial<Record<ListingStatus, number>>;
+  bookingsByStatus: Partial<Record<BookingStatus, number>>;
+  reviewsByStatus: Partial<Record<ReviewStatus, number>>;
+  listingsCreatedToday: number;
+  listingsCreatedThisWeek: number;
+  listingsCreatedThisMonth: number;
+}
+
+export interface UserStatusUpdate { active: boolean; reason?: string; }
+export interface UserRoleUpdate { role: Role; }
+export interface ListingModerate { status: "ACTIVE" | "REJECTED"; reason?: string; }
+export interface ReviewModerate { status: "APPROVED" | "REJECTED"; reason?: string; }
+
 export interface ApiProblemDetail {
   status?: number;
   title?: string;
