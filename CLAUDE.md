@@ -31,11 +31,25 @@ pnpm test && pnpm tsc --noEmit && pnpm build && pnpm exec playwright test
 
 1. **`/api/proxy/[...path]` (`src/lib/api/proxy-handler.ts`)** — the ONLY path client code uses to reach the backend for authenticated requests. It reads `pmp_access`/`pmp_refresh` from the request cookie, injects `Authorization: Bearer <access>` (deleting any client-supplied `authorization`/`cookie`), and on a 401 with a refresh token does **refresh → retry → rotate cookies** on the response. Body is buffered once so POST refresh-retries can replay it. Hop-by-hop/encoding/`set-cookie` headers are stripped on both return paths. The proxy **404s on any `/auth/*` path** — auth must go through `/api/auth/*`.
 2. **`/api/auth/*` route handlers (`src/app/api/auth/*/route.ts`)** — thin server-side wrappers that call `${API_BASE}` directly (sanctioned: server-side). `login`/`register`/`refresh`/`logout` set/rotate/clear the cookies via `src/lib/auth/cookies.ts`. `verify-email`/`forgot-password`/`reset-password` **MUST NOT manipulate cookies** — they only forward and return `{ ok: true }` or `application/problem+json`. On failure they return an explicit `new NextResponse(body, { status, headers: { "content-type": "application/problem+json" } })` — never `parseProblem` (it throws → 500).
-3. **Middleware (`src/middleware.ts`)** — next-intl locale routing + presence guard for `/dashboard`+`/admin` (require `pmp_access`). For `/admin` it fetches `${API_BASE}/users/me` directly with the bearer and requires `role ∈ {ADMIN, MODERATOR}`, else redirects to `/${locale}/login?callbackUrl=<raw pathname>`. Middleware runs in edge/Node and **cannot use the proxy or rotate cookies** — a stale access token won't refresh here; the backend 403 is the source of truth.
+3. **Middleware (`src/middleware.ts`)** — next-intl locale routing + presence guard for `PROTECTED = ["/dashboard", "/admin", "/favorites"]` (all require `pmp_access`). For `/admin` it fetches `${API_BASE}/users/me` directly with the bearer and requires `role ∈ {ADMIN, MODERATOR}`, else redirects to `/${locale}/login?callbackUrl=<raw pathname>`. Middleware runs in edge/Node and **cannot use the proxy or rotate cookies** — a stale access token won't refresh here; the backend 403 is the source of truth.
 
 **Rule:** never call `${API_BASE}` / `process.env.NEXT_PUBLIC_API_BASE` from `"use client"` code. Client → `/api/proxy/*` (via `src/lib/api/client.ts`) for data, or `/api/auth/*` helpers (`src/lib/api/endpoints/auth.ts`) for auth forms. The only direct `${API_BASE}` calls are in route handlers and middleware.
 
 `src/lib/api/client.ts` (`apiGet/apiPost/apiPut/apiDelete/apiUpload`) builds URLs as `${origin}/api/proxy/${path}` (relative in browser). `parseProblem` throws `ApiError` with `.status`, `.detail`, `.violations: { field, message }[]`.
+
+## Architecture: data layer + feature areas
+
+Typed backend endpoints are grouped by domain under `src/lib/api/endpoints/` — `auth.ts` (hits `/api/auth/*`), `catalog.ts`, `admin.ts`, `users.ts` (all hit `/api/proxy/*`). Shared response/DTO types live in `src/types/api.ts` (`Page<T>`, `Listing`, `Category`, `Favorite`, `Booking`, `AdminUser`, `Review`, `AdminStatistics`, …). Conventions:
+
+- **Locale is passed to list/detail queries, not inferred server-side.** Endpoints that return localized content take a `Locale` and forward it as an `accept-language` header (via the `lang()` helper / explicit `headers`) — e.g. `getListing`, `searchListings`, `getPendingListings`, `moderateListing`. Always thread the current locale through.
+- **Query strings** are built with a local `withQuery(base, params)` helper (drops `null`/`undefined`) in `catalog.ts`/`admin.ts` — reuse it rather than hand-concatenating.
+- **Pagination** is uniform: backend returns `Page<T>` (`content`, `totalElements`, `totalPages`, `number`, `size`); list endpoints take `page`/`size`.
+
+Feature areas built on this layer:
+- **Public catalog** — `/[locale]/catalog` (`"use client"`: filters + search via `searchListings`, `FiltersPanel`/`ListingCard`) and `/[locale]/listings/[id]` (`"use client"`: `ImageGallery`, `FavoriteButton`, `BookingDialog` → `bookListing`). Catalog components in `src/components/catalog/`.
+- **Favorites** — `/[locale]/favorites` (presence-guarded in middleware AND reads `useSession`); `FavoriteButton` calls `addFavorite`/`removeFavorite`, invalidating `["favorites"]`.
+- **Admin** — `/[locale]/(admin)/admin/{users,listings/pending,reviews/pending,statistics}`. Role-guarded by middleware (`ADMIN`/`MODERATOR`). Uses `DataTable` + `ConfirmModerationDialog` (`src/components/admin/`); statistics render with **recharts**. Moderation mutations go through `admin.ts` (`updateUserStatus/Role`, `moderateListing/Review`).
+- **Toasts** — **sonner** `<Toaster>` is mounted in `[locale]/layout.tsx`; call `toast()` from client components for mutation feedback.
 
 ## Architecture: i18n + locale-aware navigation (easy to get wrong)
 
