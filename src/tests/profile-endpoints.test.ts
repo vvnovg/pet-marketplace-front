@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { updateProfile, uploadAvatar } from "@/lib/api/endpoints/profile";
@@ -18,14 +18,6 @@ const server = setupServer(
       );
     }
     return HttpResponse.json({ id: "u1", email: "a@b.co", role: "BUYER" });
-  }),
-  http.post("*/api/proxy/users/me/avatar", async ({ request }) => {
-    const fd = await request.formData();
-    const entry = fd.get("file");
-    // Check if entry is a Blob-like object using duck-typing (instanceof Blob fails in Node/undici)
-    const body = entry && typeof entry === "object" && "size" in entry ? "file" : null;
-    calls.push({ method: "POST", url: request.url, body });
-    return HttpResponse.json({ id: "u1", avatarUrl: "/a.png" });
   }),
 );
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
@@ -62,10 +54,37 @@ describe("profile endpoints", () => {
   });
 
   it("uploadAvatar POSTs multipart with the 'file' field", async () => {
+    // jsdom's fetch/Request cannot serialize a jsdom File's bytes through a real
+    // multipart body in this environment: verified empirically that the actual bytes
+    // on the wire come out as the literal string "undefined" (size 9) regardless of
+    // what was uploaded, once the FormData crosses into `new Request()`/undici. So
+    // this stubs fetch to inspect the FormData apiUpload builds *before* that broken
+    // serialization step, where `entry instanceof Blob` and `.size`/`.text()` are
+    // still accurate.
     const file = new File(["x"], "a.png", { type: "image/png" });
-    await uploadAvatar(file, { baseUrl: "http://t" });
-    expect(last().method).toBe("POST");
-    expect(last().url).toBe("http://t/api/proxy/users/me/avatar");
-    expect(last().body).toBe("file");
+    const state: { captured: { method: string; url: string; body: { size: number; text: string } | null } | null } = {
+      captured: null,
+    };
+    const realFetch = globalThis.fetch;
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const entry = init?.body instanceof FormData ? init.body.get("file") : null;
+      state.captured = {
+        method: init?.method ?? "GET",
+        url: String(input),
+        body: entry instanceof Blob ? { size: entry.size, text: await entry.text() } : null,
+      };
+      return new Response(JSON.stringify({ id: "u1", avatarUrl: "/a.png" }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    });
+    try {
+      await uploadAvatar(file, { baseUrl: "http://t" });
+    } finally {
+      vi.stubGlobal("fetch", realFetch);
+    }
+    expect(state.captured?.method).toBe("POST");
+    expect(state.captured?.url).toBe("http://t/api/proxy/users/me/avatar");
+    expect(state.captured?.body).toEqual({ size: 1, text: "x" });
   });
 });
