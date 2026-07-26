@@ -73,6 +73,16 @@ describe("Dashboard overview", () => {
     expect(await screen.findByTestId("count-messages")).toHaveTextContent("5");
   });
 
+  it("shows a skeleton for each counter while its query is in flight", async () => {
+    renderPage(base);
+    expect(screen.getByTestId("skeleton-favorites")).toBeInTheDocument();
+    expect(screen.getByTestId("skeleton-messages")).toBeInTheDocument();
+    expect(await screen.findByTestId("count-favorites")).toBeInTheDocument();
+    expect(await screen.findByTestId("count-messages")).toBeInTheDocument();
+    expect(screen.queryByTestId("skeleton-favorites")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("skeleton-messages")).not.toBeInTheDocument();
+  });
+
   it("drops the counter when its query fails but keeps the card", async () => {
     favoritesFails = true;
     renderPage(base);
