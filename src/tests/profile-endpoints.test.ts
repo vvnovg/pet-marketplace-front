@@ -21,7 +21,10 @@ const server = setupServer(
   }),
   http.post("*/api/proxy/users/me/avatar", async ({ request }) => {
     const fd = await request.formData();
-    calls.push({ method: "POST", url: request.url, body: fd.get("file") instanceof File ? "file" : null });
+    const entry = fd.get("file");
+    // Check if entry is a Blob-like object using duck-typing (instanceof Blob fails in Node/undici)
+    const body = entry && typeof entry === "object" && "size" in entry ? "file" : null;
+    calls.push({ method: "POST", url: request.url, body });
     return HttpResponse.json({ id: "u1", avatarUrl: "/a.png" });
   }),
 );
