@@ -172,11 +172,47 @@ export interface ListingSearchParams {
   size?: number;
 }
 
+export interface SubscriptionFilters {
+  categoryId: UUID | null;
+  breedId: UUID | null;
+  city: string | null;
+  minPrice: Money | null;
+  maxPrice: Money | null;
+  gender: ListingGender | null;
+  minAge: number | null;
+  maxAge: number | null;
+  hasVaccination: boolean | null;
+  hasDocuments: boolean | null;
+}
+
 export interface Subscription {
   id: UUID;
-  filters: Record<string, unknown>;
-  isActive: boolean;
+  filters: SubscriptionFilters;
+  active: boolean;
   createdAt: IsoInstant;
+}
+
+export interface SubscriptionCreate {
+  categoryId?: string | null;
+  breedId?: string | null;
+  city?: string | null;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  gender?: ListingGender | null;
+  minAge?: number | null;
+  maxAge?: number | null;
+  hasVaccination?: boolean | null;
+  hasDocuments?: boolean | null;
+}
+
+export interface ProfileUpdate {
+  firstName: string | null;
+  lastName: string | null;
+  phone: string | null;
+  bio: string | null;
+  country: string | null;
+  city: string | null;
+  address: string | null;
 }
 
 export interface Page<T> {
