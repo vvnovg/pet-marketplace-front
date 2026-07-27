@@ -541,7 +541,7 @@ git add src/types/api.ts src/messages/ru.json src/messages/en.json src/tests/mes
 Создать `src/tests/profile-endpoints.test.ts`:
 
 ```ts
-import { describe, it, expect, beforeAll, afterAll, afterEach } from "vitest";
+import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { updateProfile, uploadAvatar } from "@/lib/api/endpoints/profile";
@@ -561,11 +561,6 @@ const server = setupServer(
       );
     }
     return HttpResponse.json({ id: "u1", email: "a@b.co", role: "BUYER" });
-  }),
-  http.post("*/api/proxy/users/me/avatar", async ({ request }) => {
-    const fd = await request.formData();
-    calls.push({ method: "POST", url: request.url, body: fd.get("file") instanceof File ? "file" : null });
-    return HttpResponse.json({ id: "u1", avatarUrl: "/a.png" });
   }),
 );
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
@@ -602,16 +597,45 @@ describe("profile endpoints", () => {
   });
 
   it("uploadAvatar POSTs multipart with the 'file' field", async () => {
+    // jsdom's fetch/Request cannot serialize a jsdom File's bytes through a real
+    // multipart body in this environment: verified empirically that the actual bytes
+    // on the wire come out as the literal string "undefined" (size 9) regardless of
+    // what was uploaded, once the FormData crosses into `new Request()`/undici. So
+    // this stubs fetch to inspect the FormData apiUpload builds *before* that broken
+    // serialization step, where `entry instanceof Blob` and `.size`/`.text()` are
+    // still accurate.
     const file = new File(["x"], "a.png", { type: "image/png" });
-    await uploadAvatar(file, { baseUrl: "http://t" });
-    expect(last().method).toBe("POST");
-    expect(last().url).toBe("http://t/api/proxy/users/me/avatar");
-    expect(last().body).toBe("file");
+    const state: { captured: { method: string; url: string; body: { size: number; text: string } | null } | null } = {
+      captured: null,
+    };
+    const realFetch = globalThis.fetch;
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const entry = init?.body instanceof FormData ? init.body.get("file") : null;
+      state.captured = {
+        method: init?.method ?? "GET",
+        url: String(input),
+        body: entry instanceof Blob ? { size: entry.size, text: await entry.text() } : null,
+      };
+      return new Response(JSON.stringify({ id: "u1", avatarUrl: "/a.png" }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    });
+    try {
+      await uploadAvatar(file, { baseUrl: "http://t" });
+    } finally {
+      vi.stubGlobal("fetch", realFetch);
+    }
+    expect(state.captured?.method).toBe("POST");
+    expect(state.captured?.url).toBe("http://t/api/proxy/users/me/avatar");
+    expect(state.captured?.body).toEqual({ size: 1, text: "x" });
   });
 });
 ```
 
 Примечание: во втором кейсе `failNext` сбрасывается только в `afterEach`, поэтому оба `await expect(...)` внутри одного `it` видят один и тот же 400 — это намеренно.
+
+Отступление от исходного плана (обнаружено при реализации): исходная версия этого теста регистрировала MSW-хендлер `http.post("*/api/proxy/users/me/avatar", ...)` и проверяла `fd.get("file") instanceof File`. Это невозможно в jsdom — байты jsdom `File` не переживают сериализацию `fetch`/`new Request()` в multipart-тело в этом окружении (на "проводе" оказывается буквальная строка `"undefined"` независимо от загруженного файла). Тест переписан так, чтобы подменять `globalThis.fetch` и разбирать `FormData`, которую строит `apiUpload`, до этого шага сериализации — там `entry instanceof Blob` и `.size`/`.text()` ещё корректны.
 
 - [ ] **Step 2: Написать падающие тесты для подписок и диалогов**
 
@@ -1397,6 +1421,7 @@ vi.mock("@/i18n", () => ({
 }));
 
 const putBodies: unknown[] = [];
+let avatarUploadCalls = 0;
 let putFailsWithViolation = false;
 const server = setupServer(
   http.put("*/api/proxy/users/me", async ({ request }) => {
@@ -1409,10 +1434,13 @@ const server = setupServer(
     }
     return HttpResponse.json({ id: "u1", email: "a@b.co", role: "BUYER" });
   }),
-  http.post("*/api/proxy/users/me/avatar", () => HttpResponse.json({ id: "u1", avatarUrl: "/a.png" })),
+  http.post("*/api/proxy/users/me/avatar", () => {
+    avatarUploadCalls += 1;
+    return HttpResponse.json({ id: "u1", avatarUrl: "/a.png" });
+  }),
 );
 beforeAll(() => server.listen({ onUnhandledRequest: "error" }));
-afterEach(() => { putBodies.length = 0; putFailsWithViolation = false; server.resetHandlers(); });
+afterEach(() => { putBodies.length = 0; avatarUploadCalls = 0; putFailsWithViolation = false; server.resetHandlers(); });
 afterAll(() => server.close());
 
 const base: UserProfile = {
@@ -1484,9 +1512,12 @@ describe("Profile page", () => {
     const big = new File([new Uint8Array(5 * 1024 * 1024 + 1)], "big.png", { type: "image/png" });
     await u.upload(screen.getByLabelText("Аватар"), big);
     expect(await screen.findByText("Файл больше 5 МБ")).toBeInTheDocument();
+    expect(avatarUploadCalls).toBe(0);
   });
 });
 ```
+
+Отступление от исходного плана (обнаружено при реализации): исходная версия этого теста проверяла только текст ошибки. Файл всё равно проходит по маске `accept="image/*"` и совпадает с зарегистрированным MSW-хендлером, так что регрессия, которая пропускала бы загрузку на сервер несмотря на превышение лимита, прошла бы этот тест незамеченной. Добавлен счётчик `avatarUploadCalls` (инкрементируется в хендлере `http.post("*/api/proxy/users/me/avatar", ...)`, сбрасывается в `afterEach`) и утверждение `expect(avatarUploadCalls).toBe(0)`, чтобы тест ловил именно эту регрессию.
 
 - [ ] **Step 2: Запустить тест и убедиться, что он падает**
 
@@ -1569,7 +1600,9 @@ export default function ProfilePage() {
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
-    // `values` (а не defaultValues) перезаполняет форму, когда сессия догрузится.
+    // `values` (а не defaultValues) перезаполняет форму, когда сессия догрузится;
+    // `keepDirtyValues` не даёт этому перезаполнению затереть поля, которые
+    // пользователь уже успел отредактировать, но ещё не отправил.
     values: {
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
@@ -1579,6 +1612,7 @@ export default function ProfilePage() {
       city: user?.city ?? "",
       address: user?.address ?? "",
     },
+    resetOptions: { keepDirtyValues: true },
   });
 
   const avatarMutation = useMutation({
@@ -1676,6 +1710,8 @@ export default function ProfilePage() {
   );
 }
 ```
+
+Отступление от исходного плана (обнаружено при реализации): исходная версия `useForm` не передавала `resetOptions: { keepDirtyValues: true }`. Без этой опции react-hook-form's `values` при изменении объекта сессии вызывает внутренний `_reset` и стирает правки, которые пользователь уже набрал в форме, но ещё не отправил (см. тест `"keeps an in-progress edit when the session refetch resolves with different data"` в Task 6 Step 1).
 
 - [ ] **Step 5: Запустить тест и убедиться, что он проходит**
 

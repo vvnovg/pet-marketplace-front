@@ -51,6 +51,26 @@ Feature areas built on this layer:
 - **Admin** — `/[locale]/(admin)/admin/{users,listings/pending,reviews/pending,statistics}`. Role-guarded by middleware (`ADMIN`/`MODERATOR`). Uses `DataTable` + `ConfirmModerationDialog` (`src/components/admin/`); statistics render with **recharts**. Moderation mutations go through `admin.ts` (`updateUserStatus/Role`, `moderateListing/Review`).
 - **Toasts** — **sonner** `<Toaster>` is mounted in `[locale]/layout.tsx`; call `toast()` from client components for mutation feedback.
 
+### Личный кабинет
+
+Route-группа `src/app/[locale]/(dashboard)` имеет собственный клиентский `layout.tsx`
+с `DashboardNav` (`src/components/dashboard/DashboardNav.tsx`): сайдбар на десктопе,
+лента вкладок на мобильных. Активный пункт вычисляет чистая функция `isNavItemActive`
+(точное совпадение для `/dashboard`, префиксное для вложенных маршрутов). Пункт
+«Избранное» намеренно ведёт на `/favorites` — страницу вне группы, поэтому сайдбар там
+не рендерится.
+
+Реализованы: обзор (`/dashboard`, счётчики избранного и непрочитанных сообщений),
+профиль (`/dashboard/profile`, форма + загрузка аватара, лимит 5 МБ проверяется на
+клиенте) и подписки (`/dashboard/subscriptions`, список/создание/удаление; создание
+переиспользует `FiltersPanel` каталога с `showSort={false}`). Разделы «Мои
+объявления», «Бронирования» и «Сообщения» — заглушки с `Dashboard.comingSoon`.
+
+Чистая логика подписок вынесена в `src/lib/subscriptions/filters.ts`
+(`describeSubscription`, `subscriptionToCatalogQuery`, `filtersToSubscriptionCreate`,
+`hasAnyFilter`) и покрыта `src/tests/subscription-filters.test.ts` отдельно от JSX.
+Кнопка «Сохранить поиск» на `/catalog` использует те же хелперы.
+
 ## Architecture: i18n + locale-aware navigation (easy to get wrong)
 
 Locale lives in the `/[locale]` URL segment (`ru`, `en`; default `ru`; `localePrefix: "always"`). `src/i18n.ts` calls `createNavigation` and exports `Link`, `useRouter`, `usePathname`, `redirect`, `getPathname` — **these auto-prepend the locale**.
