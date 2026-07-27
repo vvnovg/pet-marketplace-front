@@ -115,4 +115,47 @@ describe("forwardToBackend", () => {
     expect(res.status).toBe(401);
     expect(calls).toBe(1);
   });
+
+  it("returns a binary body byte-for-byte unchanged", async () => {
+    // Bytes that are NOT valid UTF-8: decoding them as text replaces each with U+FFFD,
+    // which is exactly how an image gets corrupted on the way through the proxy.
+    const payload = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0xff, 0xfe, 0x00, 0x80]);
+    server.use(http.get(`${API_BASE}/files/avatars/u1/a.png`, () =>
+      HttpResponse.arrayBuffer(payload.buffer as ArrayBuffer, {
+        headers: { "content-type": "image/png" },
+      }),
+    ));
+
+    const req = new Request("http://x/api/proxy/files/avatars/u1/a.png");
+    const res = await forwardToBackend(req as unknown as NextRequest, ["files", "avatars", "u1", "a.png"]);
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get("content-type")).toBe("image/png");
+    expect(new Uint8Array(await res.arrayBuffer())).toEqual(payload);
+  });
+
+  it("returns a binary body unchanged after a refresh-retry", async () => {
+    const payload = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x90]);
+    let first = true;
+    server.use(
+      http.get(`${API_BASE}/files/messages/u1/a.jpg`, () =>
+        first
+          ? ((first = false), new HttpResponse(null, { status: 401 }))
+          : HttpResponse.arrayBuffer(payload.buffer as ArrayBuffer, {
+              headers: { "content-type": "image/jpeg" },
+            }),
+      ),
+      http.post(`${API_BASE}/auth/refresh`, () =>
+        HttpResponse.json({ accessToken: "new", refreshToken: "nr", tokenType: "Bearer", expiresIn: 900 }),
+      ),
+    );
+
+    const req = new Request("http://x/api/proxy/files/messages/u1/a.jpg", {
+      headers: { cookie: "pmp_access=stale; pmp_refresh=rr" },
+    });
+    const res = await forwardToBackend(req as unknown as NextRequest, ["files", "messages", "u1", "a.jpg"]);
+
+    expect(res.status).toBe(200);
+    expect(new Uint8Array(await res.arrayBuffer())).toEqual(payload);
+  });
 });

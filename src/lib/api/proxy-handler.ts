@@ -61,7 +61,9 @@ export async function forwardToBackend(req: NextRequest, pathSegments: string[])
       const tokens = (await refreshed.json()) as TokenResponse;
       headers.set("authorization", `Bearer ${tokens.accessToken}`);
       upstream = await doFetch();
-      const body = await upstream.text();
+      // arrayBuffer, а не text: .text() декодирует тело как UTF-8 и разрушает
+      // изображения и любые другие бинарные ответы.
+      const body = await upstream.arrayBuffer();
       const out = new NextResponse(body, {
         status: upstream.status,
         headers: sanitizeHeaders(upstream.headers),
@@ -71,7 +73,9 @@ export async function forwardToBackend(req: NextRequest, pathSegments: string[])
     }
   }
 
-  const body = await upstream.text();
+  // arrayBuffer, а не text: .text() декодирует тело как UTF-8 и разрушает
+  // изображения и любые другие бинарные ответы.
+  const body = await upstream.arrayBuffer();
   return new NextResponse(body, {
     status: upstream.status,
     headers: sanitizeHeaders(upstream.headers),
