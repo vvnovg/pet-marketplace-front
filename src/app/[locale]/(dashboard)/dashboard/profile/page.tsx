@@ -26,7 +26,9 @@ export default function ProfilePage() {
 
   const { register, handleSubmit, setError, formState: { errors, isSubmitting } } = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
-    // `values` (а не defaultValues) перезаполняет форму, когда сессия догрузится.
+    // `values` (а не defaultValues) перезаполняет форму, когда сессия догрузится;
+    // `keepDirtyValues` не даёт этому перезаполнению затереть поля, которые
+    // пользователь уже успел отредактировать, но ещё не отправил.
     values: {
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
@@ -36,6 +38,7 @@ export default function ProfilePage() {
       city: user?.city ?? "",
       address: user?.address ?? "",
     },
+    resetOptions: { keepDirtyValues: true },
   });
 
   const avatarMutation = useMutation({
