@@ -63,7 +63,7 @@ export default function SubscriptionsPage() {
     [subs.data],
   );
   const breedQueries = useQuery({
-    queryKey: ["subscriptions", "breeds", breedCategoryIds, locale],
+    queryKey: ["catalog", "breeds", "bulk", breedCategoryIds, locale],
     enabled: breedCategoryIds.length > 0,
     queryFn: async () => {
       const map = new Map<string, string>();

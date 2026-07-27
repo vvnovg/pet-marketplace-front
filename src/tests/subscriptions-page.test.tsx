@@ -94,6 +94,7 @@ describe("Subscriptions page", () => {
     await u.click(await screen.findByRole("button", { name: "Новая подписка" }));
     const submit = await screen.findByRole("button", { name: "Сохранить" });
     expect(submit).toBeDisabled();
+    expect(within(screen.getByRole("dialog")).queryByLabelText(ru.Catalog.sortBy)).toBeNull();
     await u.type(screen.getByLabelText("Город"), "Самара");
     await waitFor(() => expect(submit).toBeEnabled());
     await u.click(submit);

@@ -48,6 +48,7 @@ describe("CatalogPage", () => {
     renderPage();
     expect(await screen.findByText("Kitten")).toBeInTheDocument();
     expect(screen.getByText("Puppy")).toBeInTheDocument();
+    expect(screen.getByLabelText(ru.Catalog.sortBy)).toBeInTheDocument();
   });
 
   it("shows empty state", async () => {
