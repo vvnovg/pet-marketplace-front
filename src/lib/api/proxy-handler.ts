@@ -37,10 +37,17 @@ export async function forwardToBackend(req: NextRequest, pathSegments: string[])
   // only ever see a cookie-derived bearer (or none).
   headers.delete("authorization");
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+  // The body is re-sent from a buffer below (arrayBuffer, not the original
+  // stream), so any content-length inherited from the incoming request may no
+  // longer match — drop it and let fetch compute the correct one.
+  headers.delete("content-length");
 
   // Buffer the request body once up front so the post-refresh retry can replay
   // the exact same payload without hitting a consumed/locked ReadableStream.
-  const raw = req.method === "GET" || req.method === "HEAD" ? undefined : await req.text();
+  // arrayBuffer, not text: uploads are binary multipart, and decoding them as UTF-8
+  // replaces every byte >= 0x80 with U+FFFD. An ArrayBuffer is still replayable for the
+  // refresh-retry below, exactly like the string was.
+  const raw = req.method === "GET" || req.method === "HEAD" ? undefined : await req.arrayBuffer();
 
   const doFetch = () =>
     fetch(target, {

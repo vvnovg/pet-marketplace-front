@@ -158,4 +158,23 @@ describe("forwardToBackend", () => {
     expect(res.status).toBe(200);
     expect(new Uint8Array(await res.arrayBuffer())).toEqual(payload);
   });
+
+  it("forwards a binary request body byte-for-byte unchanged", async () => {
+    const payload = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x80, 0x90, 0xfe]);
+    let received: Uint8Array | null = null;
+    server.use(http.post(`${API_BASE}/users/me/avatar`, async ({ request }) => {
+      received = new Uint8Array(await request.arrayBuffer());
+      return HttpResponse.json({ avatarUrl: "/api/proxy/files/avatars/a/b.jpg" });
+    }));
+
+    const req = new Request("http://x/api/proxy/users/me/avatar", {
+      method: "POST",
+      headers: { cookie: "pmp_access=abc", "content-type": "application/octet-stream" },
+      body: payload,
+    });
+    const res = await forwardToBackend(req as unknown as NextRequest, ["users", "me", "avatar"]);
+
+    expect(res.status).toBe(200);
+    expect(received).toEqual(payload);
+  });
 });
