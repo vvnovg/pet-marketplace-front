@@ -2,7 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { searchListings } from "@/lib/api/endpoints/catalog";
 import { FiltersPanel, type CatalogFilters } from "@/components/catalog/FiltersPanel";
 import { ListingCard } from "@/components/catalog/ListingCard";
@@ -10,6 +11,10 @@ import { Pagination } from "@/components/shared/Pagination";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useDebouncedValue } from "@/components/shared/useDebouncedValue";
 import { Button } from "@/components/ui/button";
+import { useSession } from "@/components/auth/useSession";
+import { createSubscription } from "@/lib/api/endpoints/subscriptions";
+import { filtersToSubscriptionCreate, hasAnyFilter } from "@/lib/subscriptions/filters";
+import { ApiError } from "@/lib/api/errors";
 import type { Listing, ListingImage, Page } from "@/types/api";
 import type { Locale } from "@/lib/i18n/config";
 
@@ -63,6 +68,14 @@ export default function CatalogPage() {
     page: filters.page, size: filters.size,
   }), [filters.categoryId, filters.breedId, debouncedCity, debouncedMinPrice, debouncedMaxPrice, filters.gender, debouncedMinAge, debouncedMaxAge, filters.sortBy, filters.sortDirection, filters.page, filters.size]);
 
+  const { user } = useSession();
+  const saveBody = useMemo(() => filtersToSubscriptionCreate(params), [params]);
+  const saveSearch = useMutation({
+    mutationFn: () => createSubscription(saveBody),
+    onSuccess: () => toast.success(t("saveSearchDone")),
+    onError: (e) => toast.error(t("saveSearchError", { detail: e instanceof ApiError ? e.detail : "—" })),
+  });
+
   const { data, isLoading, isError, refetch } = useQuery<Page<Listing>>({
     queryKey: ["catalog", "search", params, locale],
     queryFn: () => searchListings(params, locale),
@@ -98,7 +111,20 @@ export default function CatalogPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-bold">{t("title")}</h1>
       <div className="grid gap-4 md:grid-cols-[260px_1fr]">
-        <FiltersPanel filters={filters} onChange={(f) => setFilters((prev) => ({ ...prev, ...f }))} onReset={onReset} />
+        <div className="space-y-2">
+          <FiltersPanel filters={filters} onChange={(f) => setFilters((prev) => ({ ...prev, ...f }))} onReset={onReset} />
+          {user && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              disabled={!hasAnyFilter(saveBody) || saveSearch.isPending}
+              onClick={() => saveSearch.mutate()}
+            >
+              {t("saveSearch")}
+            </Button>
+          )}
+        </div>
         <div className="space-y-4">
           {isError ? (
             <EmptyState><div className="space-y-2"><div>{t("loadError")}</div><Button variant="outline" size="sm" onClick={() => refetch()}>{t("retry")}</Button></div></EmptyState>
