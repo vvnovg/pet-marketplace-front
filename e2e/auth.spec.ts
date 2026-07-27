@@ -71,6 +71,19 @@ test.beforeEach(async ({ page }) => {
       },
     });
   });
+
+  // The dashboard overview page (reached after login/logout navigations in
+  // this spec) fires listFavorites()/getConversations() on mount. Without
+  // stubs those hit the real proxy with the fake cookie, get a 401, and trip
+  // SessionProvider's global-401 redirect mid-test — tearing the header's
+  // UserMenu out of the DOM while a click is still pending. Stub them empty
+  // so this spec keeps testing auth, not the dashboard's data layer.
+  await page.route("**/api/proxy/favorites", (r) =>
+    r.fulfill({ status: 200, json: [] }),
+  );
+  await page.route("**/api/proxy/messages", (r) =>
+    r.fulfill({ status: 200, json: [] }),
+  );
 });
 
 test("register → verify-email-info → login (BUYER) → /dashboard", async ({ page }) => {
