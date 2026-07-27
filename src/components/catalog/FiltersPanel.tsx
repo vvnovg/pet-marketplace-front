@@ -19,10 +19,12 @@ const SORTS = [
   { value: "sellerRating:DESC", sortBy: "sellerRating", sortDirection: "DESC" as const, labelKey: "sort.sellerRating" },
 ];
 
-export function FiltersPanel({ filters, onChange, onReset }: {
+export function FiltersPanel({ filters, onChange, onReset, showSort = true }: {
   filters: CatalogFilters;
   onChange: (f: CatalogFilters) => void;
   onReset: () => void;
+  /** В диалоге создания подписки сортировка не нужна — она не входит в подписку. */
+  showSort?: boolean;
 }) {
   const t = useTranslations("Catalog");
   const tS = useTranslations("Status");
@@ -89,16 +91,18 @@ export function FiltersPanel({ filters, onChange, onReset }: {
             onChange={(e) => set({ maxAge: e.target.value ? Number(e.target.value) : null })} className="h-9" />
         </div>
       </div>
-      <div className="space-y-1">
-        <label className="text-xs text-muted-foreground">{t("sortBy")}</label>
-        <Select aria-label={t("sortBy")} value={sortValue} className="h-9 w-full"
-          onChange={(e) => {
-            const s = SORTS.find((x) => x.value === e.target.value);
-            if (s) set({ sortBy: s.sortBy, sortDirection: s.sortDirection });
-          }}>
-          {SORTS.map((s) => <option key={s.value} value={s.value}>{t(s.labelKey as never)}</option>)}
-        </Select>
-      </div>
+      {showSort && (
+        <div className="space-y-1">
+          <label className="text-xs text-muted-foreground">{t("sortBy")}</label>
+          <Select aria-label={t("sortBy")} value={sortValue} className="h-9 w-full"
+            onChange={(e) => {
+              const s = SORTS.find((x) => x.value === e.target.value);
+              if (s) set({ sortBy: s.sortBy, sortDirection: s.sortDirection });
+            }}>
+            {SORTS.map((s) => <option key={s.value} value={s.value}>{t(s.labelKey as never)}</option>)}
+          </Select>
+        </div>
+      )}
       <Button variant="ghost" size="sm" onClick={onReset}>{t("reset")}</Button>
     </div>
   );
