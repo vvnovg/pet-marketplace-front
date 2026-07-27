@@ -21,11 +21,11 @@ const base: UserProfile = {
   rating: null, totalReviews: null, createdAt: "t", updatedAt: "t",
 };
 
-const renderNav = (user: UserProfile) =>
+const renderNav = (user: UserProfile | null, status: "authenticated" | "unauthenticated" | "loading" = "authenticated") =>
   render(
     <QueryClientProvider client={qc}>
       <NextIntlClientProvider locale="ru" messages={ru}>
-        <SessionContext.Provider value={{ user, status: "authenticated" }}>
+        <SessionContext.Provider value={{ user, status }}>
           <DashboardNav />
         </SessionContext.Provider>
       </NextIntlClientProvider>
@@ -72,5 +72,12 @@ describe("DashboardNav", () => {
     renderNav(base);
     expect(screen.getByRole("link", { name: "Избранное" })).toHaveAttribute("href", "/favorites");
     expect(screen.getByRole("link", { name: "Профиль" })).toHaveAttribute("href", "/dashboard/profile");
+  });
+
+  it("renders nothing while the session is loading", () => {
+    h.pathname = "/dashboard";
+    renderNav(null, "loading");
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 });

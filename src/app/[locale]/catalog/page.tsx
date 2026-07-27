@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useRouter } from "@/i18n";
 import { searchListings } from "@/lib/api/endpoints/catalog";
 import { FiltersPanel, type CatalogFilters } from "@/components/catalog/FiltersPanel";
 import { ListingCard } from "@/components/catalog/ListingCard";
@@ -69,10 +70,17 @@ export default function CatalogPage() {
   }), [filters.categoryId, filters.breedId, debouncedCity, debouncedMinPrice, debouncedMaxPrice, filters.gender, debouncedMinAge, debouncedMaxAge, filters.sortBy, filters.sortDirection, filters.page, filters.size]);
 
   const { user } = useSession();
+  const qc = useQueryClient();
+  const router = useRouter();
   const saveBody = useMemo(() => filtersToSubscriptionCreate(params), [params]);
   const saveSearch = useMutation({
     mutationFn: () => createSubscription(saveBody),
-    onSuccess: () => toast.success(t("saveSearchDone")),
+    onSuccess: () => {
+      toast.success(t("saveSearchDone"), {
+        action: { label: t("saveSearchOpen"), onClick: () => router.push("/dashboard/subscriptions") },
+      });
+      qc.invalidateQueries({ queryKey: ["subscriptions"] });
+    },
     onError: (e) => toast.error(t("saveSearchError", { detail: e instanceof ApiError ? e.detail : "—" })),
   });
 

@@ -15,6 +15,7 @@
     "empty": "Объявления не найдены", "loadError": "Не удалось загрузить объявления", "retry": "Повторить",
     "saveSearch": "Сохранить поиск",
     "saveSearchDone": "Поиск сохранён в подписках",
+    "saveSearchOpen": "Открыть",
     "saveSearchError": "Не удалось сохранить поиск: {detail}"
   },
   "Listing": {
@@ -66,7 +67,6 @@
     "profilePage": {
       "title": "Профиль",
       "avatarTitle": "Аватар",
-      "avatarUpload": "Загрузить",
       "avatarTooLarge": "Файл больше 5 МБ",
       "avatarSaved": "Аватар обновлён",
       "firstName": "Имя",

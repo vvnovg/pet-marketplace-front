@@ -15,6 +15,7 @@
     "empty": "No listings found", "loadError": "Failed to load listings", "retry": "Retry",
     "saveSearch": "Save search",
     "saveSearchDone": "Search saved to subscriptions",
+    "saveSearchOpen": "Open",
     "saveSearchError": "Could not save search: {detail}"
   },
   "Listing": {
@@ -66,7 +67,6 @@
     "profilePage": {
       "title": "Profile",
       "avatarTitle": "Avatar",
-      "avatarUpload": "Upload",
       "avatarTooLarge": "File is larger than 5 MB",
       "avatarSaved": "Avatar updated",
       "firstName": "First name",

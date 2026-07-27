@@ -35,7 +35,9 @@ export function isNavItemActive(href: string, pathname: string): boolean {
 export function DashboardNav() {
   const t = useTranslations("Dashboard");
   const pathname = usePathname();
-  const { user } = useSession();
+  const { user, status } = useSession();
+
+  if (status === "loading") return null;
 
   const items = DASHBOARD_NAV.filter((i) => !i.roles || (user != null && i.roles.includes(user.role)));
 

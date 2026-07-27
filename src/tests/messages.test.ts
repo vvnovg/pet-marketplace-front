@@ -58,10 +58,12 @@ describe("auth message keys exist in both locales", () => {
     "Listing.bookingMessage", "Listing.bookingMessagePlaceholder", "Listing.bookingSubmit", "Listing.bookingCancel", "Listing.bookingSuccess", "Listing.bookingError", "Listing.bookingAlreadyExists",
     "Favorites.title", "Favorites.empty", "Favorites.loginRequired", "Favorites.loadError", "Favorites.retry",
     "Dashboard.overview", "Dashboard.navLabel", "Dashboard.comingSoon",
+    "Dashboard.profile", "Dashboard.myListings", "Dashboard.bookings",
+    "Dashboard.messages", "Dashboard.favorites", "Dashboard.subscriptions",
     "Dashboard.cards.profile", "Dashboard.cards.myListings", "Dashboard.cards.bookings",
     "Dashboard.cards.messages", "Dashboard.cards.favorites", "Dashboard.cards.subscriptions",
     "Dashboard.ratingLine",
-    "Dashboard.profilePage.title", "Dashboard.profilePage.avatarTitle", "Dashboard.profilePage.avatarUpload",
+    "Dashboard.profilePage.title", "Dashboard.profilePage.avatarTitle",
     "Dashboard.profilePage.avatarTooLarge", "Dashboard.profilePage.avatarSaved",
     "Dashboard.profilePage.firstName", "Dashboard.profilePage.lastName", "Dashboard.profilePage.phone",
     "Dashboard.profilePage.bio", "Dashboard.profilePage.country", "Dashboard.profilePage.city",
@@ -81,7 +83,7 @@ describe("auth message keys exist in both locales", () => {
     "Dashboard.subscriptionsPage.filterDocuments",
     "Dashboard.subscriptionsPage.rangeBetween", "Dashboard.subscriptionsPage.rangeFrom",
     "Dashboard.subscriptionsPage.rangeTo",
-    "Catalog.saveSearch", "Catalog.saveSearchDone", "Catalog.saveSearchError",
+    "Catalog.saveSearch", "Catalog.saveSearchDone", "Catalog.saveSearchOpen", "Catalog.saveSearchError",
   ] as const;
 
   const get = (obj: unknown, path: string): unknown =>

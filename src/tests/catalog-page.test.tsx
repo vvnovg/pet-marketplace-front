@@ -12,7 +12,7 @@ import type { UserProfile } from "@/types/api";
 
 vi.mock("@/i18n", () => ({
   Link: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
-  useRouter: () => ({ replace: vi.fn() }),
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
   usePathname: () => "/catalog",
 }));
 vi.mock("next-intl/navigation", () => ({}));
@@ -22,8 +22,8 @@ beforeEach(() => { server.listen({ onUnhandledRequest: "error" }); window.histor
 afterEach(() => { server.resetHandlers(); server.close(); });
 
 const mkQc = () => new QueryClient({ defaultOptions: { queries: { retry: false } } });
-const renderPage = (user: UserProfile | null = null) => render(
-  <QueryClientProvider client={mkQc()}>
+const renderPage = (user: UserProfile | null = null, qc: QueryClient = mkQc()) => render(
+  <QueryClientProvider client={qc}>
     <NextIntlClientProvider locale="ru" messages={ru}>
       <SessionContext.Provider value={{ user, status: user ? "authenticated" : "unauthenticated" }}>
         <CatalogPage />
@@ -141,5 +141,23 @@ describe("Catalog save search", () => {
     expect(savedSearches[0]).not.toHaveProperty("sortBy");
     expect(savedSearches[0]).not.toHaveProperty("page");
     expect(savedSearches[0]).not.toHaveProperty("size");
+  });
+
+  it("invalidates the subscriptions query on success", async () => {
+    listingsAndCategories();
+    server.use(
+      http.post("*/api/proxy/subscriptions", () =>
+        HttpResponse.json({ id: "s1", filters: {}, active: true, createdAt: "2026-02-01T00:00:00Z" })),
+    );
+    const qc = mkQc();
+    qc.setQueryData(["subscriptions"], []);
+    const user = userEvent.setup();
+    renderPage(authedUser, qc);
+    await screen.findByText("Kitten");
+    await user.type(screen.getByLabelText(ru.Catalog.city), "Самара");
+    const btn = screen.getByRole("button", { name: ru.Catalog.saveSearch });
+    await waitFor(() => expect(btn).toBeEnabled());
+    await user.click(btn);
+    await waitFor(() => expect(qc.getQueryState(["subscriptions"])?.isInvalidated).toBe(true));
   });
 });
