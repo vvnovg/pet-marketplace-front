@@ -17,17 +17,37 @@ const admin: UserProfile = {
   rating: null, totalReviews: null, createdAt: "t", updatedAt: "t",
 };
 
-describe("Admin placeholder", () => {
+const renderPage = () =>
+  render(
+    <QueryClientProvider client={qc}>
+      <NextIntlClientProvider locale="ru" messages={ru}>
+        <SessionContext.Provider value={{ user: admin, status: "authenticated" }}>
+          <AdminPage />
+        </SessionContext.Provider>
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
+  );
+
+describe("Admin index", () => {
   it("renders admin title", () => {
-    render(
-      <QueryClientProvider client={qc}>
-        <NextIntlClientProvider locale="ru" messages={ru}>
-          <SessionContext.Provider value={{ user: admin, status: "authenticated" }}>
-            <AdminPage />
-          </SessionContext.Provider>
-        </NextIntlClientProvider>
-      </QueryClientProvider>,
-    );
+    renderPage();
     expect(screen.getByText("Админ-панель")).toBeInTheDocument();
+  });
+
+  it("labels every section link with its translated title, not a raw key", () => {
+    renderPage();
+
+    // Each Admin.<section> is an object (title, column captions, …), so asking for the
+    // section itself yields no string and next-intl falls back to printing the key path.
+    const sections = [
+      { href: "/admin/users", label: ru.Admin.users.title },
+      { href: "/admin/listings/pending", label: ru.Admin.pendingListings.title },
+      { href: "/admin/reviews/pending", label: ru.Admin.pendingReviews.title },
+      { href: "/admin/statistics", label: ru.Admin.statistics.title },
+    ];
+    for (const { href, label } of sections) {
+      expect(screen.getByRole("link", { name: label })).toHaveAttribute("href", href);
+    }
+    expect(screen.queryByText(/^Admin\./)).not.toBeInTheDocument();
   });
 });
